@@ -20,7 +20,7 @@ select
     r.resolution_days,
     r.closure_outcome,
     r.address_key,
-    r.geo_point,
+    r.match_point,
     date_diff(m.data_through_date, r.closed_date, day) as follow_up_days
 from {{ ref('int_requests_enriched') }} r
 cross join {{ ref('meta_data_as_of') }} m
@@ -31,5 +31,5 @@ where r.is_condition_report
   and not r.closed_at_is_imputed
   and not r.has_invalid_resolution_time
   and r.closure_outcome not in ('duplicate', 'administrative_mass_closure')
-  and (r.address_key is not null or r.geo_point is not null)
+  and (r.address_key is not null or r.match_point is not null)
   and r.closed_date <= m.data_through_date

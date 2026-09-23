@@ -20,6 +20,8 @@ joined as (
         l.address_normalized,
         l.address_key,
         l.geo_point,
+        l.match_point,
+        l.is_street_level_geocode,
         l.is_in_shelby_county,
         l.is_default_geocode_point,
         l.has_valid_coordinates,

@@ -1,11 +1,13 @@
 {#
   Phase A address standardization (see docs/methodology.md, "Location matching").
-  Returns the house-number + street form: uppercase, city/state/ZIP, unit designators and punctuation removed,
+  Returns the house-number + street form: a leading business/place name dropped when a house-number segment
+  follows it, then uppercase, city/state/ZIP, unit designators and punctuation removed,
   street types and directionals abbreviated, a leading house-number range reduced to its first number.
 #}
 {% macro normalize_address(col) -%}
 {#- Jinja string literals decode escapes, so every regex backslash is written doubled. -#}
 {%- set steps = [
+    ("^[^0-9,][^,]*,\\s*(\\d+\\s[^,]*)", "\\\\1"),
     (",.*$", ""),
     ("\\s(APT|UNIT|STE|SUITE|BLDG|LOT)\\b.*$|\\s*#.*$", ""),
     ("^(\\d+)\\s*-\\s*\\d+\\b", "\\\\1"),

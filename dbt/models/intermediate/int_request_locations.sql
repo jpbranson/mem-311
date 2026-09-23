@@ -25,7 +25,11 @@ base as (
 ),
 
 keyed as (
-    select *, {{ address_key('address_normalized') }} as address_key from base
+    select
+        *,
+        {{ address_key('address_normalized') }} as address_key,
+        regexp_contains(upper(coalesce(source_address, '')), r'&| AT | AND |/') as is_intersection_address
+    from base
 ),
 
 -- geocoder default points: one coordinate shared by many requests with missing or unrelated addresses
@@ -34,7 +38,8 @@ point_stats as (
         point_key,
         count(*) as requests_at_point,
         count(distinct address_key) as distinct_addresses_at_point,
-        countif(address_key is null) as keyless_at_point
+        countif(address_key is null) as keyless_at_point,
+        countif(address_key is null and not is_intersection_address) as street_only_at_point
     from keyed
     where geo_point is not null
     group by 1
@@ -46,7 +51,11 @@ flagged as (
         coalesce(st_contains(s.county_geom, k.geo_point), false) as is_in_shelby_county,
         coalesce(ps.requests_at_point >= 50
                  and (ps.distinct_addresses_at_point >= 10 or ps.keyless_at_point >= 0.5 * ps.requests_at_point),
-                 false) as is_default_geocode_point
+                 false) as is_default_geocode_point,
+        -- D29: a street name without a house number geocodes to one point per street; 3+ such requests on the
+        -- same point mark a street-level geocode that must not drive distance-based matching
+        coalesce(k.address_key is null and not k.is_intersection_address and ps.street_only_at_point >= 3, false)
+            as is_street_level_geocode
     from keyed k
     cross join shelby s
     left join point_stats ps using (point_key)
@@ -78,11 +87,14 @@ select
     if(has_valid_coordinates, geo_point, null) as geo_point,
     is_in_shelby_county,
     is_default_geocode_point,
+    is_street_level_geocode,
     has_valid_coordinates,
+    -- point used for distance-based recurrence matching and grid-cell location entities
+    if(has_valid_coordinates and not is_street_level_geocode, geo_point, null) as match_point,
     census_tract_geoid,
     -- D23: location entity = address key when available, else a ~38m x 19m geohash cell of a valid point
     case
         when address_key is not null then concat('A|', address_key)
-        when has_valid_coordinates then concat('G|', st_geohash(geo_point, 8))
+        when has_valid_coordinates and not is_street_level_geocode then concat('G|', st_geohash(geo_point, 8))
     end as location_key
 from with_tract
