@@ -1,0 +1,28 @@
+version: 2
+
+seeds:
+  - name: request_type_map
+    description: Hand-reviewed classification of every source REQUEST_TYPE (D13, D14, D22). Add a row when a new type appears.
+    columns:
+      - name: request_type
+        description: Source REQUEST_TYPE ('(none)' for blank).
+        data_tests: [unique, not_null]
+      - name: request_type_label
+        description: Type without the department prefix.
+      - name: owning_unit
+        description: Department implied by the prefix.
+      - name: service_category
+        description: Standardized category (24 values).
+        data_tests: [not_null]
+      - name: service_group
+        description: Higher-level group (8 values).
+      - name: recurrence_family
+        description: Related categories for the broadest recurrence match level.
+      - name: is_condition_report
+        description: true = a problem at a place (recurrence-eligible); false = administrative transaction.
+      - name: location_match_basis
+        description: property = match recurrence on the same address; public_space = same address or within 25 m (D22).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["property", "public_space"]

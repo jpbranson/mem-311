@@ -34,6 +34,8 @@ models:
         description: Date is on or before data_through_date.
       - name: is_current_month
         description: Month containing data_through_date (partial).
+      - name: is_backlog_burn_in
+        description: Before 2024-04-15; backlog still building up from the Oct 2023 go-live (D25).
 
   - name: dim_request_type
     description: One row per source request type with its standardized classification (D13, D14).
@@ -184,6 +186,8 @@ models:
         description: resolution_days x 24.
       - name: resolution_band
         description: 0-1 / 1-7 / 7-30 / 30-90 / 90+ days.
+      - name: days_open_to_close
+        description: Calendar days from report date to closure date (includes imputed and mass closures); used for "resolved within N days".
       - name: has_invalid_resolution_time
         description: Closure date before report date (D12); never counted in the backlog.
       - name: current_age_days
@@ -424,6 +428,8 @@ models:
         description: Distinct calendar years with at least one condition report.
       - name: recurrence_cycles
         description: Close-then-return events (originals with a 90-day recurrence).
+      - name: recurrence_cycles_band
+        description: 0 / 1 / 2-3 / 4-9 / 10+ for the cycle distribution chart.
       - name: dominant_category
         description: Most frequent service category.
       - name: dominant_category_share

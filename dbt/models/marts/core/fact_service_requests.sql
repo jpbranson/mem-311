@@ -40,6 +40,8 @@ select
     r.closure_outcome,
 
     r.resolution_hours,
+    if(r.status_group = 'closed' and not r.has_invalid_resolution_time,
+       date_diff(r.closed_date, r.opened_date, day), null)     as days_open_to_close,
     r.resolution_days,
     r.has_invalid_resolution_time,
     r.has_same_day_time_conflict,

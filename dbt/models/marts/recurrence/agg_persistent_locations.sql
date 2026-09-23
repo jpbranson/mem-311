@@ -75,6 +75,13 @@ select
     a.active_months,
     a.active_years,
     a.recurrence_cycles,
+    case
+        when a.recurrence_cycles = 0 then '0'
+        when a.recurrence_cycles = 1 then '1'
+        when a.recurrence_cycles <= 3 then '2-3'
+        when a.recurrence_cycles <= 9 then '4-9'
+        else '10+'
+    end                                                                as recurrence_cycles_band,
     a.recurrence_eligible_closures,
     d.dominant_category,
     d.dominant_category_requests,

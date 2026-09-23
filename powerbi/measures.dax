@@ -1,0 +1,296 @@
+// Memphis 311 Service Reliability - DAX measures
+// ---------------------------------------------------------------------------------------------
+// How to load (Power BI Desktop, 2024+):
+//   1. Home > Enter data > name the table _Measures > Load (one empty column is fine; hide it later).
+//   2. Open DAX query view, paste this whole file, click Run to check the EVALUATE results against
+//      the expected values in build_guide.md, then click "Update model: Add N new measures".
+//   3. Optional: run set_measure_properties.csx in Tabular Editor to apply format strings and
+//      display folders in one pass (or set them by hand from the table in build_guide.md).
+// Relationships assumed (build_guide.md, "Model"):
+//   dim_date[date_day] 1-* fact_service_requests[opened_date]     (active)
+//   dim_date[date_day] 1-* fact_service_requests[closed_date]     (INACTIVE - used via USERELATIONSHIP)
+//   dim_date[date_day] 1-* agg_backlog_daily / agg_backlog_daily_total / agg_backlog_age [snapshot_date]
+//   dim_service_category[service_category] 1-* fact_service_requests, agg_backlog_daily, agg_backlog_age,
+//                                              fact_request_recurrence [service_category]
+// ---------------------------------------------------------------------------------------------
+
+DEFINE
+
+    // ---------------------------------------------------------------- 0 Meta
+    MEASURE '_Measures'[Data Through Date] =
+        MAX ( meta_data_as_of[data_through_date] )
+
+    MEASURE '_Measures'[Data Through Label] =
+        "Data through " & FORMAT ( [Data Through Date], "mmm d, yyyy" )
+            & " | extracted from the City of Memphis 311 ArcGIS service"
+
+    // ---------------------------------------------------------------- 1 Responsiveness
+    // Opened measures follow the report date (active relationship).
+    MEASURE '_Measures'[Requests Opened] =
+        COUNTROWS ( fact_service_requests )
+
+    // Closed measures follow the closure date (D26). Invalid closures (closed before opened, D12) are excluded.
+    MEASURE '_Measures'[Requests Closed] =
+        CALCULATE (
+            COUNTROWS ( fact_service_requests ),
+            fact_service_requests[status_group] = "closed",
+            fact_service_requests[has_invalid_resolution_time] = FALSE (),
+            USERELATIONSHIP ( dim_date[date_day], fact_service_requests[closed_date] )
+        )
+
+    MEASURE '_Measures'[Net Change (Opened - Closed)] =
+        [Requests Opened] - [Requests Closed]
+
+    // Resolution time of requests CLOSED in the period; imputed, invalid and mass closures have blank
+    // resolution_days and are ignored by MEDIAN (D11, D12, D28).
+    MEASURE '_Measures'[Median Resolution (days)] =
+        CALCULATE (
+            MEDIAN ( fact_service_requests[resolution_days] ),
+            USERELATIONSHIP ( dim_date[date_day], fact_service_requests[closed_date] )
+        )
+
+    MEASURE '_Measures'[P90 Resolution (days)] =
+        CALCULATE (
+            PERCENTILEX.INC (
+                FILTER ( fact_service_requests, NOT ISBLANK ( fact_service_requests[resolution_days] ) ),
+                fact_service_requests[resolution_days],
+                0.9
+            ),
+            USERELATIONSHIP ( dim_date[date_day], fact_service_requests[closed_date] )
+        )
+
+    // Share of requests REPORTED in the period that closed within N calendar days. Requests younger than
+    // N days at the data cut-off are left out of both sides so recent periods are not understated.
+    MEASURE '_Measures'[% Resolved Within 7 Days] =
+        VAR cutoff = [Data Through Date] - 7
+        RETURN
+            DIVIDE (
+                CALCULATE ( COUNTROWS ( fact_service_requests ),
+                    fact_service_requests[days_open_to_close] <= 7,
+                    fact_service_requests[opened_date] <= cutoff ),
+                CALCULATE ( COUNTROWS ( fact_service_requests ),
+                    fact_service_requests[opened_date] <= cutoff )
+            )
+
+    MEASURE '_Measures'[% Resolved Within 30 Days] =
+        VAR cutoff = [Data Through Date] - 30
+        RETURN
+            DIVIDE (
+                CALCULATE ( COUNTROWS ( fact_service_requests ),
+                    fact_service_requests[days_open_to_close] <= 30,
+                    fact_service_requests[opened_date] <= cutoff ),
+                CALCULATE ( COUNTROWS ( fact_service_requests ),
+                    fact_service_requests[opened_date] <= cutoff )
+            )
+
+    // ---------------------------------------------------------------- 2 Backlog
+    // Backlog is a stock, not a flow: every backlog measure reads ONE day - the last visible date,
+    // capped at the data cut-off. On a monthly axis that is the month-end backlog.
+    MEASURE '_Measures'[Backlog Snapshot Date] =
+        VAR firstVisible = MIN ( dim_date[date_day] )
+        VAR lastVisible = MAX ( dim_date[date_day] )
+        VAR thru = [Data Through Date]
+        RETURN
+            IF ( firstVisible > thru, BLANK (), MIN ( lastVisible, thru ) )
+
+    MEASURE '_Measures'[Open Requests (Backlog)] =
+        VAR d = [Backlog Snapshot Date]
+        RETURN
+            CALCULATE ( SUM ( agg_backlog_daily[open_requests] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = d )
+
+    MEASURE '_Measures'[Backlog Over 30 Days] =
+        VAR d = [Backlog Snapshot Date]
+        RETURN
+            CALCULATE (
+                SUM ( agg_backlog_daily[open_31_90d] ) + SUM ( agg_backlog_daily[open_91_180d] )
+                    + SUM ( agg_backlog_daily[open_over_180d] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = d )
+
+    MEASURE '_Measures'[Backlog Over 90 Days] =
+        VAR d = [Backlog Snapshot Date]
+        RETURN
+            CALCULATE (
+                SUM ( agg_backlog_daily[open_91_180d] ) + SUM ( agg_backlog_daily[open_over_180d] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = d )
+
+    MEASURE '_Measures'[Backlog Over 180 Days] =
+        VAR d = [Backlog Snapshot Date]
+        RETURN
+            CALCULATE ( SUM ( agg_backlog_daily[open_over_180d] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = d )
+
+    MEASURE '_Measures'[% Backlog Over 30 Days] =
+        DIVIDE ( [Backlog Over 30 Days], [Open Requests (Backlog)] )
+
+    MEASURE '_Measures'[% Backlog Over 90 Days] =
+        DIVIDE ( [Backlog Over 90 Days], [Open Requests (Backlog)] )
+
+    // Medians cannot be added up across categories, so they come pre-computed: the per-category table
+    // when exactly one category is in context, the all-category table when none is filtered out,
+    // and BLANK for any other multi-category selection.
+    MEASURE '_Measures'[Median Backlog Age (days)] =
+        VAR d = [Backlog Snapshot Date]
+        VAR selectedCats = COUNTROWS ( VALUES ( dim_service_category[service_category] ) )
+        VAR allCats = COUNTROWS ( ALL ( dim_service_category[service_category] ) )
+        RETURN
+            SWITCH (
+                TRUE (),
+                selectedCats = 1,
+                    CALCULATE ( MAX ( agg_backlog_daily[median_age_days] ),
+                        REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = d ),
+                selectedCats = allCats,
+                    CALCULATE ( MAX ( agg_backlog_daily_total[median_age_days] ),
+                        REMOVEFILTERS ( dim_date ), agg_backlog_daily_total[snapshot_date] = d ),
+                BLANK ()
+            )
+
+    MEASURE '_Measures'[P90 Backlog Age (days)] =
+        VAR d = [Backlog Snapshot Date]
+        VAR selectedCats = COUNTROWS ( VALUES ( dim_service_category[service_category] ) )
+        VAR allCats = COUNTROWS ( ALL ( dim_service_category[service_category] ) )
+        RETURN
+            SWITCH (
+                TRUE (),
+                selectedCats = 1,
+                    CALCULATE ( MAX ( agg_backlog_daily[p90_age_days] ),
+                        REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = d ),
+                selectedCats = allCats,
+                    CALCULATE ( MAX ( agg_backlog_daily_total[p90_age_days] ),
+                        REMOVEFILTERS ( dim_date ), agg_backlog_daily_total[snapshot_date] = d ),
+                BLANK ()
+            )
+
+    // For the stacked age-band chart (legend = agg_backlog_age[age_band]).
+    MEASURE '_Measures'[Open Requests by Age Band] =
+        VAR d = [Backlog Snapshot Date]
+        RETURN
+            CALCULATE ( SUM ( agg_backlog_age[open_requests] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_age[snapshot_date] = d )
+
+    // Headline card: ignores the date slicer, always the latest complete day.
+    MEASURE '_Measures'[Current Backlog] =
+        CALCULATE ( [Open Requests (Backlog)], REMOVEFILTERS ( dim_date ) )
+
+    // "Is old backlog growing faster than total backlog?" - year-over-year change at the snapshot date.
+    MEASURE '_Measures'[Backlog YoY Change %] =
+        VAR d = [Backlog Snapshot Date]
+        VAR prior =
+            CALCULATE ( SUM ( agg_backlog_daily[open_requests] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = EDATE ( d, -12 ) )
+        RETURN
+            DIVIDE ( [Open Requests (Backlog)] - prior, prior )
+
+    MEASURE '_Measures'[Backlog Over 90 Days YoY Change %] =
+        VAR d = [Backlog Snapshot Date]
+        VAR prior =
+            CALCULATE (
+                SUM ( agg_backlog_daily[open_91_180d] ) + SUM ( agg_backlog_daily[open_over_180d] ),
+                REMOVEFILTERS ( dim_date ), agg_backlog_daily[snapshot_date] = EDATE ( d, -12 ) )
+        RETURN
+            DIVIDE ( [Backlog Over 90 Days] - prior, prior )
+
+    // ---------------------------------------------------------------- 3 Durability (recurrence)
+    // Primary definition (D22): same service category; same address, or within 25 m for public-space
+    // problems. Only originals observed for the whole window count (right-censoring). Date context
+    // follows the ORIGINAL request's report date.
+    MEASURE '_Measures'[Recurrence Rate 30d] =
+        DIVIDE (
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[has_recurrence_30d] = TRUE () ),
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[is_recurrence_eligible_30d] = TRUE () )
+        )
+
+    MEASURE '_Measures'[Recurrence Rate 90d] =
+        DIVIDE (
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[has_recurrence_90d] = TRUE () ),
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[is_recurrence_eligible_90d] = TRUE () )
+        )
+
+    MEASURE '_Measures'[Recurrence Rate 180d] =
+        DIVIDE (
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[has_recurrence_180d] = TRUE () ),
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[is_recurrence_eligible_180d] = TRUE () )
+        )
+
+    MEASURE '_Measures'[Recurrence Originals (90d)] =
+        CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[is_recurrence_eligible_90d] = TRUE () )
+
+    MEASURE '_Measures'[Recurred Within 90d] =
+        CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[has_recurrence_90d] = TRUE () )
+
+    MEASURE '_Measures'[Median Days to Recurrence] =
+        CALCULATE (
+            MEDIAN ( fact_service_requests[days_to_first_recurrence] ),
+            fact_service_requests[is_recurrence_eligible_180d] = TRUE (),
+            fact_service_requests[has_recurrence_180d] = TRUE ()
+        )
+
+    MEASURE '_Measures'[Recurrence Relationships] =
+        COUNTROWS ( fact_request_recurrence )
+
+    // Label for the speed-vs-durability table: compares the row's category with the all-category values.
+    MEASURE '_Measures'[Speed vs Durability] =
+        VAR med = [Median Resolution (days)]
+        VAR rate = [Recurrence Rate 90d]
+        VAR allMed = CALCULATE ( [Median Resolution (days)], REMOVEFILTERS ( dim_service_category ) )
+        VAR allRate = CALCULATE ( [Recurrence Rate 90d], REMOVEFILTERS ( dim_service_category ) )
+        RETURN
+            IF (
+                ISBLANK ( rate ), BLANK (),
+                SWITCH (
+                    TRUE (),
+                    med <= allMed && rate > allRate, "Fast but returns",
+                    med <= allMed && rate <= allRate, "Fast and durable",
+                    med > allMed && rate > allRate, "Slow and returns",
+                    "Slow but durable"
+                )
+            )
+
+    // Sensitivity page: agg_recurrence_sensitivity has its own slicers (scope, window, match level);
+    // keep scope and window single-select so rows are not double counted.
+    MEASURE '_Measures'[Sensitivity Recurrence Rate] =
+        DIVIDE ( SUM ( agg_recurrence_sensitivity[recurred] ), SUM ( agg_recurrence_sensitivity[eligible_originals] ) )
+
+    MEASURE '_Measures'[Headline Recurrence Rate] =
+        CALCULATE ( [Sensitivity Recurrence Rate],
+            agg_recurrence_sensitivity[is_headline_definition] = TRUE (),
+            agg_recurrence_sensitivity[scope] = "All condition reports" )
+
+    // ---------------------------------------------------------------- 4 Persistent locations
+    MEASURE '_Measures'[Persistent Locations] =
+        CALCULATE ( COUNTROWS ( agg_persistent_locations ), agg_persistent_locations[is_persistent] = TRUE () )
+
+    MEASURE '_Measures'[Chronic Locations] =
+        CALCULATE ( COUNTROWS ( agg_persistent_locations ), agg_persistent_locations[persistence_tier] = "1. Chronic" )
+
+    MEASURE '_Measures'[Locations With Repeat Requests] =
+        COUNTROWS ( agg_persistent_locations )
+
+    MEASURE '_Measures'[Recurrence Cycles] =
+        SUM ( agg_persistent_locations[recurrence_cycles] )
+
+    // Share of all close-then-return events that happen at persistent locations (not category-filtered).
+    MEASURE '_Measures'[% of Recurrence Cycles at Persistent Locations] =
+        DIVIDE (
+            CALCULATE ( SUM ( agg_persistent_locations[recurrence_cycles] ), agg_persistent_locations[is_persistent] = TRUE () ),
+            CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[has_recurrence_90d] = TRUE (),
+                REMOVEFILTERS ( dim_date ), REMOVEFILTERS ( dim_service_category ), REMOVEFILTERS ( dim_location ) )
+        )
+
+    MEASURE '_Measures'[Unresolved at Location] =
+        CALCULATE ( COUNTROWS ( fact_service_requests ), fact_service_requests[is_open] = TRUE () )
+
+// Check against build_guide.md "Validation" (all dates, all categories):
+EVALUATE
+ROW (
+    "Requests Opened", [Requests Opened],
+    "Requests Closed", [Requests Closed],
+    "Median Resolution (days)", [Median Resolution (days)],
+    "P90 Resolution (days)", [P90 Resolution (days)],
+    "% Resolved Within 7 Days", [% Resolved Within 7 Days],
+    "Current Backlog", [Current Backlog],
+    "% Backlog Over 90 Days", CALCULATE ( [% Backlog Over 90 Days], REMOVEFILTERS ( dim_date ) ),
+    "Median Backlog Age (days)", CALCULATE ( [Median Backlog Age (days)], REMOVEFILTERS ( dim_date ) ),
+    "Recurrence Rate 90d", [Recurrence Rate 90d],
+    "Persistent Locations", [Persistent Locations]
+)

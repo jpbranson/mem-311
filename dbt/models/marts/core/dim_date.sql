@@ -25,5 +25,7 @@ select
     -- City of Memphis fiscal year runs July-June; FY2026 = Jul 2025 - Jun 2026
     extract(year from date_day) + if(extract(month from date_day) >= 7, 1, 0) as fiscal_year,
     date_day <= (select data_through_date from bounds)            as is_observed,
+    -- D25: backlog totals and the >180-day band are still filling until 181 days after go-live
+    date_day < date_add(date '{{ var("go_live_date") }}', interval 181 day) as is_backlog_burn_in,
     date_trunc(date_day, month) = date_trunc((select data_through_date from bounds), month) as is_current_month
 from days
