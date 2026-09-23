@@ -79,6 +79,10 @@ uv run python scripts/run_pipeline.py                 # daily: incremental extra
 uv run python scripts/run_pipeline.py --skip-extract  # rebuild models only
 ```
 
+A GitHub Actions workflow ([`.github/workflows/refresh.yml`](.github/workflows/refresh.yml)) runs the same
+pipeline on a schedule: incremental Monday to Saturday and a full snapshot on Sunday, at 11:00 UTC. It can also
+be started by hand from the Actions tab. It reads the service-account key from the repo secret `GCP_SA_KEY`.
+
 The dbt profile (`dbt/profiles.yml`) targets project `mem-311`. Change `project` there to use your own. A
 full extraction takes about two minutes. `dbt build` (24 models, 1 seed, 77 tests) takes a few minutes.
 

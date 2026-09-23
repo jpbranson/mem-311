@@ -1,0 +1,65 @@
+# Scheduled refresh: Memphis 311 API -> BigQuery raw -> dbt build/test.
+# Mon-Sat: incremental extract (48 h lookback). Sunday: full snapshot, which also detects deletions (D07).
+# Requires repo secret GCP_SA_KEY: the JSON of a service account with BigQuery Data Editor + Job User on mem-311.
+name: Refresh pipeline
+
+on:
+  schedule:
+    - cron: "0 11 * * 1-6" # 06:00 Memphis (CDT) / 05:00 (CST)
+    - cron: "0 11 * * 0"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Extract mode
+        type: choice
+        options: [incremental, full, skip-extract]
+        default: incremental
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Run pipeline
+        env:
+          MODE: ${{ github.event_name == 'schedule' && (github.event.schedule == '0 11 * * 0' && 'full' || 'incremental') || inputs.mode }}
+        run: |
+          case "$MODE" in
+            full)         flag="--full" ;;
+            skip-extract) flag="--skip-extract" ;;
+            *)            flag="" ;;
+          esac
+          uv run python scripts/run_pipeline.py $flag
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-logs-${{ github.run_id }}
+          path: |
+            logs/
+            dbt/logs/
+            dbt/target/run_results.json
+          retention-days: 14
+          if-no-files-found: ignore
