@@ -1,0 +1,45 @@
+name: mem_311
+version: "1.0.0"
+config-version: 2
+profile: mem_311
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  analysis_start_date: "2023-10-01"   # D09
+  go_live_date: "2023-10-16"          # first day of full intake in the current system (D09, D25)
+  local_tz: "America/Chicago"         # D10
+  recurrence_windows: [30, 90, 180]
+  # Primary recurrence definition (D22): same service category; same address, or within this radius for
+  # public-space problems. The sensitivity mart reports all alternatives.
+  primary_match_radius_m: 25
+  primary_window_days: 90
+  sensitivity_radii_m: [25, 50, 100]
+  max_match_radius_m: 100
+  max_window_days: 180
+
+models:
+  mem_311:
+    +persist_docs: {relation: true, columns: true}
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: table
+    marts:
+      +schema: analytics
+      +materialized: table
+
+seeds:
+  mem_311:
+    +schema: reference
+    request_type_map:
+      +column_types:
+        is_condition_report: bool

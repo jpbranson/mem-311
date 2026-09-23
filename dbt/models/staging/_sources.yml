@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: raw
+    database: mem-311
+    schema: raw
+    description: Memphis 311 data loaded by ingestion/extract_311.py (append-only; PII excluded, see D02).
+    tables:
+      - name: memphis_311_requests
+        description: One row per source record per extraction batch.
+        loaded_at_field: _ingested_at
+        freshness:
+          warn_after: {count: 8, period: day}
+          error_after: {count: 15, period: day}
+        columns:
+          - name: OBJECTID
+            data_tests: [not_null]
+          - name: _batch_id
+            data_tests: [not_null]
+      - name: ingestion_batches
+        description: One row per extraction run with validation counts and the last_edited_date high-water mark.
+        columns:
+          - name: batch_id
+            data_tests: [unique, not_null]
+          - name: status
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ["success", "failed"]

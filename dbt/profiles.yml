@@ -1,0 +1,14 @@
+# Credentials come from the GOOGLE_APPLICATION_CREDENTIALS environment variable; nothing secret is committed.
+mem_311:
+  target: prod
+  outputs:
+    prod:
+      type: bigquery
+      method: service-account
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+      project: mem-311
+      dataset: analytics
+      location: US
+      threads: 8
+      job_execution_timeout_seconds: 900
+      priority: interactive

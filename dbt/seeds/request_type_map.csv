@@ -1,167 +1,167 @@
-request_type,request_type_label,owning_unit,service_category,service_group,recurrence_family,is_condition_report
-(none),(none),Other,General / Miscellaneous,General,general,false
-CE-Accumulation of Stagnant,Accumulation of Stagnant,Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-CE-Code Miscellaneous,Code Miscellaneous,Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-CE-Downtown Cleanup,Downtown Cleanup,Code Enforcement,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-CE-Junky Yard,Junky Yard,Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-CE-Open Storage and Furnishin,Open Storage and Furnishin,Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-CE-Recreational Vehicle Illeg,Recreational Vehicle Illeg,Code Enforcement,Vehicle Violations,Code Enforcement,blight,true
-"CE-Substandard,Derelict Struc","Substandard,Derelict Struc",Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-CE-Vacant Lot Code Violation,Vacant Lot Code Violation,Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-CE-Vehicle Violations,Vehicle Violations,Code Enforcement,Vehicle Violations,Code Enforcement,blight,true
-CE-Weeds Occupied Property,Weeds Occupied Property,Code Enforcement,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-COMM - Miscellaneous,Miscellaneous,Code Enforcement - Commercial,Property Code Violations,Code Enforcement,blight,true
-COMM-Graffiti,Graffiti,Code Enforcement - Commercial,Graffiti,Environmental & Right-of-Way,blight,true
-COMM-Junky Property,Junky Property,Code Enforcement - Commercial,Property Code Violations,Code Enforcement,blight,true
-COMM-Pot Holes,Pot Holes,Code Enforcement - Commercial,Potholes & Pavement,Streets & Drainage,street_surface,true
-"COMM-Substandard Delelict, Struc","Substandard Delelict, Struc",Code Enforcement - Commercial,Property Code Violations,Code Enforcement,blight,true
-COMM-Vehicle Violation,Vehicle Violation,Code Enforcement - Commercial,Vehicle Violations,Code Enforcement,blight,true
-COMM-Weeds Occupied Property,Weeds Occupied Property,Code Enforcement - Commercial,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-CW-Miscellaneous,Miscellaneous,Community Weeds (Grounds),Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-CW-Weeds Vacant Houses,Weeds Vacant Houses,Community Weeds (Grounds),Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-CW-Weeds Vacant Lots,Weeds Vacant Lots,Community Weeds (Grounds),Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-EE-Bulk Trash,Bulk Trash,Environmental Enforcement,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-EE-Carts Out After Hours,Carts Out After Hours,Environmental Enforcement,Carts Out After Hours,Code Enforcement,blight,true
-EE-Illegal Dumping,Illegal Dumping,Environmental Enforcement,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-EE-Illegal Signs,Illegal Signs,Environmental Enforcement,Graffiti,Environmental & Right-of-Way,blight,true
-EMI-Cave In,Cave In,Environmental Maintenance (Sewer),Cave-ins & Street Sinking,Streets & Drainage,street_surface,true
-EMI-Manhole Cover Problem,Manhole Cover Problem,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true
-EMI-Repair Miscellaneous,Repair Miscellaneous,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true
-EMI-Sewage Spill/Overflow,Sewage Spill/Overflow,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true
-EMI-Sewer Backup,Sewer Backup,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true
-EMI-Sewer Miscellaneous,Sewer Miscellaneous,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true
-EMI-Sewer Odor,Sewer Odor,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true
-EMI-Street Sinking,Street Sinking,Environmental Maintenance (Sewer),Cave-ins & Street Sinking,Streets & Drainage,street_surface,true
-EN-Construction Inspection,Construction Inspection,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Curb Ramp Construction,Curb Ramp Construction,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Curb Ramp Request,Curb Ramp Request,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Curb/Gutter Repair,Curb/Gutter Repair,Engineering,Potholes & Pavement,Streets & Drainage,street_surface,true
-EN-Drainage Improvement,Drainage Improvement,Engineering,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-EN-Maintain Markings,Maintain Markings,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Maintain Signs,Maintain Signs,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Markings/Signs,Markings/Signs,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Miscellaneous,Miscellaneous,Engineering,General / Miscellaneous,General,general,false
-EN-New Markings,New Markings,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false
-EN-New Signs,New Signs,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false
-EN-Railroad Inspection,Railroad Inspection,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Railroad R-O-W Maint. 2,Railroad R-O-W Maint. 2,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Railroad R-O-W Maintenanc,Railroad R-O-W Maintenanc,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Sidewalk Inspection,Sidewalk Inspection,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true
-EN-Speed Hump Maintenance,Speed Hump Maintenance,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Speed Hump Request,Speed Hump Request,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false
-EN-Street Improvements,Street Improvements,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false
-EN-Traffic Sight Obstruction,Traffic Sight Obstruction,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Traffic Sign Obstruction,Traffic Sign Obstruction,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Traffic Signal Maintenance,Traffic Signal Maintenance,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EN-Traffic Signal Operation,Traffic Signal Operation,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-EX-Animal Service,Animal Service,Animal Services,Animal Services,Public Safety & Other,animal_services,true
-FS-Anti-Neglect,Anti-Neglect,Fire Services,Property Code Violations,Code Enforcement,blight,true
-FS-Emergency Services,Emergency Services,Fire Services,Public Safety,Public Safety & Other,public_safety,true
-FS-Fire Hydrants,Fire Hydrants,Fire Services,Public Safety,Public Safety & Other,public_safety,true
-FS-Miscellaneous,Miscellaneous,Fire Services,General / Miscellaneous,General,general,false
-GS-Grass Cutting,Grass Cutting,General Services,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-GS-Median Strip Maintenance,Median Strip Maintenance,General Services,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-GS-Miscellaneous,Miscellaneous,General Services,General / Miscellaneous,General,general,false
-GS-Tree Removal,Tree Removal,General Services,Trees,Environmental & Right-of-Way,trees,true
-MCSC-Miscellaneous,Miscellaneous,311 Customer Service Center,General / Miscellaneous,General,general,false
-MSCCE-Zoning Codes,Zoning Codes,Code Enforcement,Property Code Violations,Code Enforcement,blight,true
-PD-Abandoned Vehicles,Abandoned Vehicles,Police Services,Vehicle Violations,Code Enforcement,blight,true
-PD-Complaint about Service,Complaint about Service,Police Services,Public Safety,Public Safety & Other,public_safety,true
-PD-Criminal Activity,Criminal Activity,Police Services,Public Safety,Public Safety & Other,public_safety,true
-PD-Quality of Life Issues,Quality of Life Issues,Police Services,Public Safety,Public Safety & Other,public_safety,true
-PD-Traffic Violations,Traffic Violations,Police Services,Public Safety,Public Safety & Other,public_safety,true
-PN-Community Center,Community Center,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true
-PN-Equipment,Equipment,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true
-PN-Library (Miscellaneous),Library (Miscellaneous),Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true
-PN-Lights in the Parks,Lights in the Parks,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true
-PN-MO Equipment,MO Equipment,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true
-PN-Mowing,Mowing,Parks & Neighborhoods,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-PN-Roadways in Parks,Roadways in Parks,Parks & Neighborhoods,Potholes & Pavement,Streets & Drainage,street_surface,true
-PN-Signage,Signage,Parks & Neighborhoods,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-PN-Signage in Parks,Signage in Parks,Parks & Neighborhoods,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true
-PN-Trash Litter,Trash Litter,Parks & Neighborhoods,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-PN-Tree Crew,Tree Crew,Parks & Neighborhoods,Trees,Environmental & Right-of-Way,trees,true
-PW (DM)-CAVITY IN STREET,CAVITY IN STREET,Public Works - Drain Maintenance,Cave-ins & Street Sinking,Streets & Drainage,street_surface,true
-PW (DM)-CAVITY OFF STREET,CAVITY OFF STREET,Public Works - Drain Maintenance,Cave-ins & Street Sinking,Streets & Drainage,street_surface,true
-PW (DM)-CLAIM CAVITY,CLAIM CAVITY,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLAIM FLOODING BUILDING,CLAIM FLOODING BUILDING,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLAIM FLOODING HOUSE,CLAIM FLOODING HOUSE,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLAIM FLOODING LAND,CLAIM FLOODING LAND,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLAIM FLOODING STREET,CLAIM FLOODING STREET,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLAIM FROM INLET,CLAIM FROM INLET,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLAIM MANHOLE COVER,CLAIM MANHOLE COVER,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false
-PW (DM)-CLEAN DRIVEWAY PIPE,CLEAN DRIVEWAY PIPE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-CLEAN WASH RACK,CLEAN WASH RACK,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-DITCH MAINTENANCE,DITCH MAINTENANCE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-Drain Inlet Clogged,Drain Inlet Clogged,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-FLOODING LAND,FLOODING LAND,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-FLOODING STREET,FLOODING STREET,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-FLOODING STRUCTURE,FLOODING STRUCTURE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-PREVENTATIVE MAINTENANCE,PREVENTATIVE MAINTENANCE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,false
-PW (DM)-REPAIR,REPAIR,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-REPAIR INLET,REPAIR INLET,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-RESET/REPLACE INLET GRATE,RESET/REPLACE INLET GRATE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-RESET/REPLACE MANHOLE COVER,RESET/REPLACE MANHOLE COVER,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (DM)-SITE CHECK,SITE CHECK,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,false
-PW (FC)-Flood Control - Weeds,Flood Control - Weeds,Public Works - Flood Control,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-PW (HE)-Ditch,Ditch,Public Works - Heavy Equipment,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-PW (HE)-Fire,Fire,Public Works - Heavy Equipment,Street Cleaning,Streets & Drainage,street_cleaning,true
-PW (HE)-Heavy Equipment,Heavy Equipment,Public Works - Heavy Equipment,Street Cleaning,Streets & Drainage,street_cleaning,true
-PW (HE)-Street Cleaning,Street Cleaning,Public Works - Heavy Equipment,Street Cleaning,Streets & Drainage,street_cleaning,true
-PW (ROW)-Alley Cutting,Alley Cutting,Public Works - Right-of-Way,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-PW (ROW)-Alley Debris,Alley Debris,Public Works - Right-of-Way,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-PW (ROW)-BRX Bridge Maintenance,BRX Bridge Maintenance,Public Works - Right-of-Way,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (ROW)-Graffiti,Graffiti,Public Works - Right-of-Way,Graffiti,Environmental & Right-of-Way,blight,true
-PW (ROW)-Right of Way Weeds,Right of Way Weeds,Public Works - Right-of-Way,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true
-PW (ROW)-Roadside Litter,Roadside Litter,Public Works - Right-of-Way,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-PW (ROW)-Trees Trimming,Trees Trimming,Public Works - Right-of-Way,Trees,Environmental & Right-of-Way,trees,true
-PW (SM)-Edge of Street Damage,Edge of Street Damage,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (SM)-Guardrails,Guardrails,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (SM)-Pot Hole in Alley,Pot Hole in Alley,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (SM)-Potholes,Potholes,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (SM)-Snow and Ice,Snow and Ice,Public Works - Street Maintenance,Street Cleaning,Streets & Drainage,street_cleaning,true
-PW (SM)-Street Cracking/Crumbling,Street Cracking/Crumbling,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (SM)-Street/Pavement Inspection,Street/Pavement Inspection,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true
-PW (SM)-Trees in Street,Trees in Street,Public Works - Street Maintenance,Trees,Environmental & Right-of-Way,trees,true
-PW (SW)-Storm Water,Storm Water,Public Works - Storm Water,Drainage & Flooding,Streets & Drainage,drainage_sewer,true
-SC-Mayors Action Center(MIS),Mayors Action Center(MIS),Shelby County,General / Miscellaneous,General,general,false
-SWM-Billing for Burnt Cart,Billing for Burnt Cart,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Bulk Trash Validation,Bulk Trash Validation,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Burnt Cart,Burnt Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-By SWF Fee Code,By SWF Fee Code,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Cart Lease Application,Cart Lease Application,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Cart Repair,Cart Repair,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-Carts Out After-hours,Carts Out After-hours,Solid Waste Management,Carts Out After Hours,Code Enforcement,blight,true
-SWM-Code Violation,Code Violation,Solid Waste Management,Property Code Violations,Code Enforcement,blight,true
-SWM-Contaminated Recycle Cart,Contaminated Recycle Cart,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Dead Animal Collection,Dead Animal Collection,Solid Waste Management,Dead Animal Collection,Solid Waste,dead_animal,true
-SWM-Garbage Cart Not Out,Garbage Cart Not Out,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true
-SWM-Garbage Missed,Garbage Missed,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true
-SWM-Garbage Waiver Request,Garbage Waiver Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Illegal Dumping,Illegal Dumping,Solid Waste Management,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-SWM-Leased Cart Delivery,Leased Cart Delivery,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Leased Cart Labeling,Leased Cart Labeling,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Leased Cart Pickup,Leased Cart Pickup,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Miscellaneous,Miscellaneous,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Missed Bulk Trash,Missed Bulk Trash,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true
-SWM-Missing Cart,Missing Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-Missing Lease Cart,Missing Lease Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-Missing Recycle Cart,Missing Recycle Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-New Connect Listing,New Connect Listing,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-New Start Garbage Request,New Start Garbage Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Pick-Up Extra Cart,Pick-Up Extra Cart,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Recycle Bin New Start,Recycle Bin New Start,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Recycle Bin Request,Recycle Bin Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Recycle Cart Delivery,Recycle Cart Delivery,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Recycle Cart Pickup,Recycle Cart Pickup,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Recycle Cart Repair,Recycle Cart Repair,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-Recycling Missed,Recycling Missed,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true
-SWM-SWF Discount Prog.Request,SWF Discount Prog.Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Service Quality,Service Quality,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true
-SWM-Solid Waste Fees,Solid Waste Fees,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false
-SWM-Storm Debris,Storm Debris,Solid Waste Management,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true
-SWM-Strike Team,Strike Team,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true
-SWM-Switched Cart,Switched Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-SWM-Trash Can Maintenance,Trash Can Maintenance,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true
-Service Quality,Service Quality,Other,Missed Collection,Solid Waste,solid_waste_collection,true
-Vendor Abated,Vendor Abated,Other,Property Code Violations,Code Enforcement,blight,true
+request_type,request_type_label,owning_unit,service_category,service_group,recurrence_family,is_condition_report,location_match_basis
+(none),(none),Other,General / Miscellaneous,General,general,false,public_space
+CE-Accumulation of Stagnant,Accumulation of Stagnant,Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+CE-Code Miscellaneous,Code Miscellaneous,Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+CE-Downtown Cleanup,Downtown Cleanup,Code Enforcement,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+CE-Junky Yard,Junky Yard,Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+CE-Open Storage and Furnishin,Open Storage and Furnishin,Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+CE-Recreational Vehicle Illeg,Recreational Vehicle Illeg,Code Enforcement,Vehicle Violations,Code Enforcement,blight,true,property
+"CE-Substandard,Derelict Struc","Substandard,Derelict Struc",Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+CE-Vacant Lot Code Violation,Vacant Lot Code Violation,Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+CE-Vehicle Violations,Vehicle Violations,Code Enforcement,Vehicle Violations,Code Enforcement,blight,true,property
+CE-Weeds Occupied Property,Weeds Occupied Property,Code Enforcement,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,property
+COMM - Miscellaneous,Miscellaneous,Code Enforcement - Commercial,Property Code Violations,Code Enforcement,blight,true,property
+COMM-Graffiti,Graffiti,Code Enforcement - Commercial,Graffiti,Environmental & Right-of-Way,blight,true,property
+COMM-Junky Property,Junky Property,Code Enforcement - Commercial,Property Code Violations,Code Enforcement,blight,true,property
+COMM-Pot Holes,Pot Holes,Code Enforcement - Commercial,Potholes & Pavement,Streets & Drainage,street_surface,true,property
+"COMM-Substandard Delelict, Struc","Substandard Delelict, Struc",Code Enforcement - Commercial,Property Code Violations,Code Enforcement,blight,true,property
+COMM-Vehicle Violation,Vehicle Violation,Code Enforcement - Commercial,Vehicle Violations,Code Enforcement,blight,true,property
+COMM-Weeds Occupied Property,Weeds Occupied Property,Code Enforcement - Commercial,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,property
+CW-Miscellaneous,Miscellaneous,Community Weeds (Grounds),Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,property
+CW-Weeds Vacant Houses,Weeds Vacant Houses,Community Weeds (Grounds),Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,property
+CW-Weeds Vacant Lots,Weeds Vacant Lots,Community Weeds (Grounds),Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,property
+EE-Bulk Trash,Bulk Trash,Environmental Enforcement,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+EE-Carts Out After Hours,Carts Out After Hours,Environmental Enforcement,Carts Out After Hours,Code Enforcement,blight,true,property
+EE-Illegal Dumping,Illegal Dumping,Environmental Enforcement,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+EE-Illegal Signs,Illegal Signs,Environmental Enforcement,Graffiti,Environmental & Right-of-Way,blight,true,public_space
+EMI-Cave In,Cave In,Environmental Maintenance (Sewer),Cave-ins & Street Sinking,Streets & Drainage,street_surface,true,public_space
+EMI-Manhole Cover Problem,Manhole Cover Problem,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true,public_space
+EMI-Repair Miscellaneous,Repair Miscellaneous,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true,public_space
+EMI-Sewage Spill/Overflow,Sewage Spill/Overflow,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true,public_space
+EMI-Sewer Backup,Sewer Backup,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true,property
+EMI-Sewer Miscellaneous,Sewer Miscellaneous,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true,public_space
+EMI-Sewer Odor,Sewer Odor,Environmental Maintenance (Sewer),Sewer,Streets & Drainage,drainage_sewer,true,property
+EMI-Street Sinking,Street Sinking,Environmental Maintenance (Sewer),Cave-ins & Street Sinking,Streets & Drainage,street_surface,true,public_space
+EN-Construction Inspection,Construction Inspection,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Curb Ramp Construction,Curb Ramp Construction,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Curb Ramp Request,Curb Ramp Request,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Curb/Gutter Repair,Curb/Gutter Repair,Engineering,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+EN-Drainage Improvement,Drainage Improvement,Engineering,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+EN-Maintain Markings,Maintain Markings,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Maintain Signs,Maintain Signs,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Markings/Signs,Markings/Signs,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Miscellaneous,Miscellaneous,Engineering,General / Miscellaneous,General,general,false,public_space
+EN-New Markings,New Markings,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false,public_space
+EN-New Signs,New Signs,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false,public_space
+EN-Railroad Inspection,Railroad Inspection,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Railroad R-O-W Maint. 2,Railroad R-O-W Maint. 2,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Railroad R-O-W Maintenanc,Railroad R-O-W Maintenanc,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Sidewalk Inspection,Sidewalk Inspection,Engineering,Sidewalks & Construction,Traffic & Engineering,sidewalks,true,public_space
+EN-Speed Hump Maintenance,Speed Hump Maintenance,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Speed Hump Request,Speed Hump Request,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false,public_space
+EN-Street Improvements,Street Improvements,Engineering,Traffic Engineering Requests,Traffic & Engineering,traffic_requests,false,public_space
+EN-Traffic Sight Obstruction,Traffic Sight Obstruction,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Traffic Sign Obstruction,Traffic Sign Obstruction,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Traffic Signal Maintenance,Traffic Signal Maintenance,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EN-Traffic Signal Operation,Traffic Signal Operation,Engineering,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+EX-Animal Service,Animal Service,Animal Services,Animal Services,Public Safety & Other,animal_services,true,public_space
+FS-Anti-Neglect,Anti-Neglect,Fire Services,Property Code Violations,Code Enforcement,blight,true,property
+FS-Emergency Services,Emergency Services,Fire Services,Public Safety,Public Safety & Other,public_safety,true,public_space
+FS-Fire Hydrants,Fire Hydrants,Fire Services,Public Safety,Public Safety & Other,public_safety,true,public_space
+FS-Miscellaneous,Miscellaneous,Fire Services,General / Miscellaneous,General,general,false,public_space
+GS-Grass Cutting,Grass Cutting,General Services,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,public_space
+GS-Median Strip Maintenance,Median Strip Maintenance,General Services,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,public_space
+GS-Miscellaneous,Miscellaneous,General Services,General / Miscellaneous,General,general,false,public_space
+GS-Tree Removal,Tree Removal,General Services,Trees,Environmental & Right-of-Way,trees,true,public_space
+MCSC-Miscellaneous,Miscellaneous,311 Customer Service Center,General / Miscellaneous,General,general,false,public_space
+MSCCE-Zoning Codes,Zoning Codes,Code Enforcement,Property Code Violations,Code Enforcement,blight,true,property
+PD-Abandoned Vehicles,Abandoned Vehicles,Police Services,Vehicle Violations,Code Enforcement,blight,true,public_space
+PD-Complaint about Service,Complaint about Service,Police Services,Public Safety,Public Safety & Other,public_safety,true,public_space
+PD-Criminal Activity,Criminal Activity,Police Services,Public Safety,Public Safety & Other,public_safety,true,public_space
+PD-Quality of Life Issues,Quality of Life Issues,Police Services,Public Safety,Public Safety & Other,public_safety,true,public_space
+PD-Traffic Violations,Traffic Violations,Police Services,Public Safety,Public Safety & Other,public_safety,true,public_space
+PN-Community Center,Community Center,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true,public_space
+PN-Equipment,Equipment,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true,public_space
+PN-Library (Miscellaneous),Library (Miscellaneous),Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true,public_space
+PN-Lights in the Parks,Lights in the Parks,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true,public_space
+PN-MO Equipment,MO Equipment,Parks & Neighborhoods,Parks & Facilities,Public Safety & Other,parks,true,public_space
+PN-Mowing,Mowing,Parks & Neighborhoods,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,public_space
+PN-Roadways in Parks,Roadways in Parks,Parks & Neighborhoods,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PN-Signage,Signage,Parks & Neighborhoods,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+PN-Signage in Parks,Signage in Parks,Parks & Neighborhoods,"Traffic Signs, Signals & Markings",Traffic & Engineering,traffic_control,true,public_space
+PN-Trash Litter,Trash Litter,Parks & Neighborhoods,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+PN-Tree Crew,Tree Crew,Parks & Neighborhoods,Trees,Environmental & Right-of-Way,trees,true,public_space
+PW (DM)-CAVITY IN STREET,CAVITY IN STREET,Public Works - Drain Maintenance,Cave-ins & Street Sinking,Streets & Drainage,street_surface,true,public_space
+PW (DM)-CAVITY OFF STREET,CAVITY OFF STREET,Public Works - Drain Maintenance,Cave-ins & Street Sinking,Streets & Drainage,street_surface,true,public_space
+PW (DM)-CLAIM CAVITY,CLAIM CAVITY,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLAIM FLOODING BUILDING,CLAIM FLOODING BUILDING,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLAIM FLOODING HOUSE,CLAIM FLOODING HOUSE,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLAIM FLOODING LAND,CLAIM FLOODING LAND,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLAIM FLOODING STREET,CLAIM FLOODING STREET,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLAIM FROM INLET,CLAIM FROM INLET,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLAIM MANHOLE COVER,CLAIM MANHOLE COVER,Public Works - Drain Maintenance,Damage Claims,Streets & Drainage,claims,false,public_space
+PW (DM)-CLEAN DRIVEWAY PIPE,CLEAN DRIVEWAY PIPE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-CLEAN WASH RACK,CLEAN WASH RACK,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-DITCH MAINTENANCE,DITCH MAINTENANCE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-Drain Inlet Clogged,Drain Inlet Clogged,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-FLOODING LAND,FLOODING LAND,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-FLOODING STREET,FLOODING STREET,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-FLOODING STRUCTURE,FLOODING STRUCTURE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-PREVENTATIVE MAINTENANCE,PREVENTATIVE MAINTENANCE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,false,public_space
+PW (DM)-REPAIR,REPAIR,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-REPAIR INLET,REPAIR INLET,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-RESET/REPLACE INLET GRATE,RESET/REPLACE INLET GRATE,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-RESET/REPLACE MANHOLE COVER,RESET/REPLACE MANHOLE COVER,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (DM)-SITE CHECK,SITE CHECK,Public Works - Drain Maintenance,Drainage & Flooding,Streets & Drainage,drainage_sewer,false,public_space
+PW (FC)-Flood Control - Weeds,Flood Control - Weeds,Public Works - Flood Control,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,public_space
+PW (HE)-Ditch,Ditch,Public Works - Heavy Equipment,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+PW (HE)-Fire,Fire,Public Works - Heavy Equipment,Street Cleaning,Streets & Drainage,street_cleaning,true,public_space
+PW (HE)-Heavy Equipment,Heavy Equipment,Public Works - Heavy Equipment,Street Cleaning,Streets & Drainage,street_cleaning,true,public_space
+PW (HE)-Street Cleaning,Street Cleaning,Public Works - Heavy Equipment,Street Cleaning,Streets & Drainage,street_cleaning,true,public_space
+PW (ROW)-Alley Cutting,Alley Cutting,Public Works - Right-of-Way,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,public_space
+PW (ROW)-Alley Debris,Alley Debris,Public Works - Right-of-Way,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+PW (ROW)-BRX Bridge Maintenance,BRX Bridge Maintenance,Public Works - Right-of-Way,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (ROW)-Graffiti,Graffiti,Public Works - Right-of-Way,Graffiti,Environmental & Right-of-Way,blight,true,public_space
+PW (ROW)-Right of Way Weeds,Right of Way Weeds,Public Works - Right-of-Way,Weeds & Overgrowth,Environmental & Right-of-Way,blight,true,public_space
+PW (ROW)-Roadside Litter,Roadside Litter,Public Works - Right-of-Way,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+PW (ROW)-Trees Trimming,Trees Trimming,Public Works - Right-of-Way,Trees,Environmental & Right-of-Way,trees,true,public_space
+PW (SM)-Edge of Street Damage,Edge of Street Damage,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (SM)-Guardrails,Guardrails,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (SM)-Pot Hole in Alley,Pot Hole in Alley,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (SM)-Potholes,Potholes,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (SM)-Snow and Ice,Snow and Ice,Public Works - Street Maintenance,Street Cleaning,Streets & Drainage,street_cleaning,true,public_space
+PW (SM)-Street Cracking/Crumbling,Street Cracking/Crumbling,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (SM)-Street/Pavement Inspection,Street/Pavement Inspection,Public Works - Street Maintenance,Potholes & Pavement,Streets & Drainage,street_surface,true,public_space
+PW (SM)-Trees in Street,Trees in Street,Public Works - Street Maintenance,Trees,Environmental & Right-of-Way,trees,true,public_space
+PW (SW)-Storm Water,Storm Water,Public Works - Storm Water,Drainage & Flooding,Streets & Drainage,drainage_sewer,true,public_space
+SC-Mayors Action Center(MIS),Mayors Action Center(MIS),Shelby County,General / Miscellaneous,General,general,false,public_space
+SWM-Billing for Burnt Cart,Billing for Burnt Cart,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Bulk Trash Validation,Bulk Trash Validation,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Burnt Cart,Burnt Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-By SWF Fee Code,By SWF Fee Code,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Cart Lease Application,Cart Lease Application,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Cart Repair,Cart Repair,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-Carts Out After-hours,Carts Out After-hours,Solid Waste Management,Carts Out After Hours,Code Enforcement,blight,true,property
+SWM-Code Violation,Code Violation,Solid Waste Management,Property Code Violations,Code Enforcement,blight,true,property
+SWM-Contaminated Recycle Cart,Contaminated Recycle Cart,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Dead Animal Collection,Dead Animal Collection,Solid Waste Management,Dead Animal Collection,Solid Waste,dead_animal,true,public_space
+SWM-Garbage Cart Not Out,Garbage Cart Not Out,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true,property
+SWM-Garbage Missed,Garbage Missed,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true,property
+SWM-Garbage Waiver Request,Garbage Waiver Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Illegal Dumping,Illegal Dumping,Solid Waste Management,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+SWM-Leased Cart Delivery,Leased Cart Delivery,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Leased Cart Labeling,Leased Cart Labeling,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Leased Cart Pickup,Leased Cart Pickup,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Miscellaneous,Miscellaneous,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Missed Bulk Trash,Missed Bulk Trash,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true,property
+SWM-Missing Cart,Missing Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-Missing Lease Cart,Missing Lease Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-Missing Recycle Cart,Missing Recycle Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-New Connect Listing,New Connect Listing,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-New Start Garbage Request,New Start Garbage Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Pick-Up Extra Cart,Pick-Up Extra Cart,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Recycle Bin New Start,Recycle Bin New Start,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Recycle Bin Request,Recycle Bin Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Recycle Cart Delivery,Recycle Cart Delivery,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Recycle Cart Pickup,Recycle Cart Pickup,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Recycle Cart Repair,Recycle Cart Repair,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-Recycling Missed,Recycling Missed,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true,property
+SWM-SWF Discount Prog.Request,SWF Discount Prog.Request,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Service Quality,Service Quality,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true,property
+SWM-Solid Waste Fees,Solid Waste Fees,Solid Waste Management,Cart & Account Requests,Solid Waste,solid_waste_admin,false,property
+SWM-Storm Debris,Storm Debris,Solid Waste Management,Illegal Dumping & Litter,Environmental & Right-of-Way,blight,true,public_space
+SWM-Strike Team,Strike Team,Solid Waste Management,Missed Collection,Solid Waste,solid_waste_collection,true,property
+SWM-Switched Cart,Switched Cart,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+SWM-Trash Can Maintenance,Trash Can Maintenance,Solid Waste Management,Cart Repair & Replacement,Solid Waste,solid_waste_collection,true,property
+Service Quality,Service Quality,Other,Missed Collection,Solid Waste,solid_waste_collection,true,property
+Vendor Abated,Vendor Abated,Other,Property Code Violations,Code Enforcement,blight,true,property
