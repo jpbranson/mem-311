@@ -30,6 +30,7 @@ select
     date_trunc(r.closed_date, month)                            as closed_month,
     r.closed_at_source,
     r.closed_at_is_imputed,
+    r.is_mass_closure,
 
     r.status_group,
     r.is_open,

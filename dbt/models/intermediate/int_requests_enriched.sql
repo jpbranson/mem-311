@@ -37,6 +37,24 @@ joined as (
     left join type_map m using (request_type)
 ),
 
+-- D28: days on which the city closed an unusually large, mostly aged share of the backlog at once
+closure_days as (
+    select
+        closed_date,
+        count(*) as closures,
+        countif(date_diff(closed_date, opened_date, day) > 30) / count(*) as aged_share
+    from joined
+    where status_group = 'closed'
+    group by 1
+),
+
+mass_closure_days as (
+    select closed_date
+    from closure_days
+    where closures >= 10 * (select approx_quantiles(closures, 2)[offset(1)] from closure_days)
+      and aged_share >= 0.8
+),
+
 derived as (
     select
         *,
@@ -45,8 +63,11 @@ derived as (
             partition by coalesce(address_normalized, format('%.5f,%.5f', longitude, latitude)), request_type, opened_date
         ) >= 100 as is_bulk_artifact,
 
+        closed_date in (select closed_date from mass_closure_days) as is_mass_closure,
+
         case
             when status_group != 'closed' then null
+            when closed_date in (select closed_date from mass_closure_days) then 'administrative_mass_closure'
             when regexp_contains(lower(concat(coalesce(resolution_summary, ''), ' ', coalesce(resolution_code, ''))),
                  r'already been reported|duplicate|\bdup\b') then 'duplicate'
             when regexp_contains(lower(concat(coalesce(resolution_summary, ''), ' ', coalesce(resolution_code, ''))),
@@ -70,9 +91,10 @@ select
     *,
     status_group = 'closed' and closed_before_opened                     as has_invalid_resolution_time,
     -- D11/D12: resolution time only for closures with a recorded (not imputed) timestamp that is not negative
-    if(status_group = 'closed' and not closed_at_is_imputed and not closed_before_opened,
+    -- D28: mass administrative closures are not resolutions
+    if(status_group = 'closed' and not closed_at_is_imputed and not closed_before_opened and not is_mass_closure,
        greatest(datetime_diff(closed_at, opened_at, second), 0) / 3600.0, null)  as resolution_hours,
-    if(status_group = 'closed' and not closed_at_is_imputed and not closed_before_opened,
+    if(status_group = 'closed' and not closed_at_is_imputed and not closed_before_opened and not is_mass_closure,
        greatest(datetime_diff(closed_at, opened_at, second), 0) / 86400.0, null) as resolution_days,
     opened_date >= date('{{ var("analysis_start_date") }}')              as is_in_analysis_window,
     farm_fingerprint(location_key)                                       as location_id

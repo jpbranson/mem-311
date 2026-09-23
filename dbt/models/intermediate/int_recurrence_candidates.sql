@@ -81,7 +81,7 @@ select
     f.opened_at                                                      as follower_opened_at,
     datetime_diff(f.opened_at, o.closed_at, second) / 86400.0        as days_after_closure,
     st_distance(o.geo_point, f.geo_point)                            as distance_m,
-    o.address_key is not null and o.address_key = f.address_key      as is_same_address,
+    coalesce(o.address_key = f.address_key, false)                   as is_same_address,
     o.request_type = f.request_type                                  as is_same_request_type,
     o.service_category = f.service_category                          as is_same_category,
     o.location_match_basis                                           as original_location_match_basis,

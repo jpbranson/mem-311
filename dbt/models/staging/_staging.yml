@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: stg_311_requests
+    description: >
+      One row per live Memphis 311 request, latest extracted version. Live means present in the most recent
+      successful full snapshot or a later successful incremental batch (D06, D07). Statuses, timestamps and
+      codes are standardized; business classification happens in intermediate models.
+    columns:
+      - name: request_id
+        description: Source OBJECTID; record key (D08).
+        data_tests: [unique, not_null]
+      - name: request_number
+        description: City service request number (INCIDENT_NUMBER); business key.
+        data_tests: [unique, not_null]
+      - name: request_type
+        description: Source REQUEST_TYPE, '(none)' when blank.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('request_type_map')
+                field: request_type
+              config:
+                severity: warn
+      - name: source_status
+        description: Source REQUEST_STATUS with the mangled en dash repaired.
+      - name: status_group
+        description: open / closed, derived from status (D11).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["open", "closed"]
+      - name: opened_at
+        description: Reported time in America/Chicago; local midnight when the source value is date-only (D10).
+        data_tests: [not_null]
+      - name: opened_date
+        description: Local calendar date the request was reported.
+        data_tests: [not_null]
+      - name: opened_is_date_only
+        description: True when REPORTED_DATE carried no time of day (stored as 00:00:00 UTC), mostly SeeClickFix intake.
+      - name: closed_at
+        description: Local closure time, coalesce(Closed_Date, RESOLVED_DATE, last_edited_date) for closed requests (D11).
+      - name: closed_at_source
+        description: Which source field supplied closed_at.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["closed_date", "resolved_date", "last_edited_date"]
+      - name: closed_at_is_imputed
+        description: True when closed_at fell back to last_edited_date; such closures are excluded from resolution metrics.
+      - name: council_district
+        description: City council district 1-7 from the source (cd_name); null when missing or out of range.
+      - name: zip_code
+        description: First five digits of the source ZIP code.
+      - name: longitude
+        description: WGS84 longitude from the feature geometry (D04).
+      - name: latitude
+        description: WGS84 latitude from the feature geometry (D04).
+      - name: is_ai_detected
+        description: Created by the Google AI Detection pilot (D15).
+      - name: is_seeclickfix
+        description: Linked to a SeeClickFix issue (resident app intake).

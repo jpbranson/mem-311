@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: int_request_locations
+    description: Location attributes per request - normalized address, matching key, coordinate validity, Census tract, location entity (D17, D18, D23).
+    columns:
+      - name: request_id
+        data_tests: [unique, not_null]
+      - name: address_normalized
+        description: Phase A standardized address (uppercase, no city/state/ZIP/unit, abbreviated street types).
+      - name: address_key
+        description: Matching key - normalized address without trailing street type; null without a non-zero house number.
+      - name: has_valid_coordinates
+        description: Point inside Shelby County and not a geocoder default point (D17).
+      - name: is_default_geocode_point
+        description: Coordinate shared by 50+ requests with mostly missing or 10+ distinct addresses.
+      - name: census_tract_geoid
+        description: 11-digit Census tract GEOID from point-in-polygon.
+      - name: location_key
+        description: "'A|<address_key>' or 'G|<geohash8>' (D23)."
+
+  - name: int_requests_enriched
+    description: One row per request with classification, closure outcome, resolution time, data-quality flags and location entity.
+    columns:
+      - name: request_id
+        data_tests: [unique, not_null]
+      - name: service_category
+        description: Standardized category from the request_type_map seed; 'Unmapped' for new source types (D13).
+        data_tests: [not_null]
+      - name: closure_outcome
+        description: Heuristic outcome from resolution text (D19) or administrative_mass_closure (D28).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["duplicate", "referred", "no_issue_found", "misrouted", "needs_info",
+                         "completed_or_unspecified", "administrative_mass_closure"]
+      - name: resolution_days
+        description: Days from opened_at to closed_at; null for imputed, invalid or mass closures (D11, D12, D28).
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: is_bulk_artifact
+        description: Part of a group of 100+ requests with the same place, type and day (D16).
+      - name: is_mass_closure
+        description: Closed on a day of mass administrative closure (D28).
+
+  - name: int_recurrence_originals
+    description: Requests eligible to be the original in a recurrence relationship, with observed follow-up days (D21, D22).
+    columns:
+      - name: request_id
+        data_tests: [unique, not_null]
+      - name: follow_up_days
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: int_recurrence_candidates
+    description: All original/follower pairs under the loosest definition (family, 100 m or same address, 180 days).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [original_request_id, follower_request_id]
+    columns:
+      - name: days_after_closure
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 180
+                inclusive: true
+      - name: is_primary_match
+        description: Pair satisfies the primary recurrence definition (D22).
+
+  - name: int_recurrence_outcomes
+    description: One row per recurrence original with first-recurrence timing and censoring-aware window flags.
+    columns:
+      - name: request_id
+        data_tests: [unique, not_null]
+
+  - name: int_backlog_daily_open
+    description: One row per request per local day it was open at end of day (D25).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [snapshot_date, request_id]
+    columns:
+      - name: age_days
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0

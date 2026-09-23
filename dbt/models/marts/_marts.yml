@@ -1,0 +1,440 @@
+version: 2
+
+models:
+  # ---------------------------------------------------------------- core
+  - name: meta_data_as_of
+    description: One-row table with the extraction time and the last complete local day covered. Drives the "data through" card.
+    columns:
+      - name: extracted_at_utc
+        description: Time of the latest ingestion batch.
+      - name: data_through_date
+        description: Last complete America/Chicago day in the data (extraction date minus one).
+      - name: analysis_start_date
+        description: First day of the analysis window (D09).
+      - name: live_request_count
+        description: Requests in staging.
+
+  - name: dim_date
+    description: Calendar dimension from the analysis start through one year past the data cut-off.
+    columns:
+      - name: date_day
+        description: Calendar date (primary key).
+        data_tests: [unique, not_null]
+      - name: month_start
+        description: First day of the month.
+      - name: year_month
+        description: YYYY-MM label.
+      - name: month_label
+        description: "'Mon YYYY' label; sort by month_start."
+      - name: week_start
+        description: Monday of the ISO week.
+      - name: fiscal_year
+        description: City of Memphis fiscal year (July-June); FY2026 = Jul 2025 - Jun 2026.
+      - name: is_observed
+        description: Date is on or before data_through_date.
+      - name: is_current_month
+        description: Month containing data_through_date (partial).
+
+  - name: dim_request_type
+    description: One row per source request type with its standardized classification (D13, D14).
+    columns:
+      - name: request_type_id
+        description: farm_fingerprint(request_type); joins to fact_service_requests.
+        data_tests: [unique, not_null]
+      - name: request_type
+        description: Source REQUEST_TYPE.
+        data_tests: [unique]
+      - name: request_type_label
+        description: Request type without the department prefix.
+      - name: owning_unit
+        description: Department implied by the type prefix (SWM, CE, PW (SM), ...).
+      - name: service_category
+        description: Standardized category (24 values).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_service_category')
+                field: service_category
+      - name: service_group
+        description: Higher-level service group (8 values).
+      - name: recurrence_family
+        description: Related-category group used for the broadest recurrence matching level.
+      - name: is_condition_report
+        description: Reports a problem at a place (eligible for recurrence) rather than an administrative transaction (D14).
+      - name: request_count
+        description: Requests of this type in staging.
+
+  - name: dim_service_category
+    description: One row per standardized service category - the shared slicer dimension for fact and aggregate tables.
+    columns:
+      - name: service_category
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: service_group
+        description: Higher-level service group.
+      - name: is_recurrence_eligible
+        description: All request types in the category are condition reports.
+      - name: volume_rank
+        description: Rank by total request volume (1 = largest); use as a sort-by column.
+
+  - name: dim_location
+    description: Derived location entity (D23) - one row per address key or ~38 m x 19 m geohash cell.
+    columns:
+      - name: location_id
+        description: farm_fingerprint(location_key); primary key.
+        data_tests: [unique, not_null]
+      - name: location_key
+        description: "'A|<address_key>' or 'G|<geohash8>'."
+      - name: location_type
+        description: address or grid_cell.
+      - name: display_address
+        description: Most frequent normalized address among the location's requests.
+      - name: latitude
+        description: Centroid of valid request points.
+      - name: longitude
+        description: Centroid of valid request points.
+      - name: point_spread_m
+        description: Largest distance between two request points at the location.
+      - name: is_spatially_inconsistent
+        description: Points more than 250 m apart - the address key likely merges different places; excluded from persistence ranking.
+      - name: census_tract_geoid
+        description: Most frequent tract among the location's requests.
+      - name: request_count
+        description: Requests in the analysis window.
+
+  - name: dim_census_tract
+    description: Shelby County Census tracts (221) with simplified WKT geometry and centroid (D18).
+    columns:
+      - name: census_tract_geoid
+        description: 11-digit GEOID; primary key.
+        data_tests: [unique, not_null]
+      - name: tract_label
+        description: e.g. "Census Tract 12.01".
+      - name: tract_wkt
+        description: Tract polygon simplified to 10 m, WKT (for the Icon Map visual).
+
+  - name: fact_service_requests
+    description: >
+      One row per 311 service request reported on or after 2023-10-01, excluding the bulk-load artifact (D09, D16).
+      Carries responsiveness, backlog and recurrence attributes so Power BI measures can slice by any dimension.
+    columns:
+      - name: request_id
+        description: Primary key (source OBJECTID).
+        data_tests: [unique, not_null]
+      - name: request_number
+        description: City service request number.
+      - name: request_type_id
+        description: FK to dim_request_type.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_request_type')
+                field: request_type_id
+      - name: service_category
+        description: FK to dim_service_category.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_service_category')
+                field: service_category
+      - name: location_id
+        description: FK to dim_location; null when there is neither an address key nor valid coordinates.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_id
+      - name: census_tract_geoid
+        description: FK to dim_census_tract.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_census_tract')
+                field: census_tract_geoid
+      - name: council_district
+        description: Council district 1-7 as recorded at intake.
+      - name: opened_date
+        description: Local date reported; FK to dim_date.
+        data_tests: [not_null]
+      - name: opened_at
+        description: Local reported datetime (midnight when date-only, D10).
+      - name: closed_date
+        description: Local closure date; null while open.
+      - name: closed_at_is_imputed
+        description: Closure time imputed from last_edited_date (D11).
+      - name: is_mass_closure
+        description: Closed in the 2025-09-22 administrative mass closure (D28).
+      - name: status_group
+        description: open / closed.
+      - name: is_open
+        description: Currently open.
+      - name: source_status
+        description: City status label.
+      - name: closure_outcome
+        description: duplicate / referred / no_issue_found / misrouted / needs_info / completed_or_unspecified / administrative_mass_closure (D19, D28).
+      - name: resolution_days
+        description: Days from report to closure; null for open, imputed, invalid and mass closures.
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: resolution_hours
+        description: resolution_days x 24.
+      - name: resolution_band
+        description: 0-1 / 1-7 / 7-30 / 30-90 / 90+ days.
+      - name: has_invalid_resolution_time
+        description: Closure date before report date (D12); never counted in the backlog.
+      - name: current_age_days
+        description: For open requests, days since reported as of data_through_date.
+      - name: current_age_band
+        description: Backlog age band for open requests.
+      - name: is_condition_report
+        description: Request type reports a problem at a place (D14).
+      - name: has_valid_coordinates
+        description: D17.
+      - name: latitude
+        description: Valid latitude only.
+      - name: longitude
+        description: Valid longitude only.
+      - name: is_ai_detected
+        description: Google AI Detection pilot record (D15).
+      - name: is_seeclickfix
+        description: SeeClickFix intake.
+      - name: is_recurrence_original
+        description: Eligible to be the original in the recurrence analysis (D21).
+      - name: recurrence_follow_up_days
+        description: Days observed after closure before the data cut-off.
+      - name: days_to_first_recurrence
+        description: Days from closure to the first related request (primary definition, within 180 days).
+      - name: is_recurrence_eligible_30d
+        description: Original observed for at least 30 days after closure (denominator of the 30-day rate).
+      - name: has_recurrence_30d
+        description: Related request within 30 days of closure (numerator).
+      - name: is_recurrence_eligible_90d
+        description: Denominator of the 90-day rate.
+      - name: has_recurrence_90d
+        description: Numerator of the 90-day rate.
+      - name: is_recurrence_eligible_180d
+        description: Denominator of the 180-day rate.
+      - name: has_recurrence_180d
+        description: Numerator of the 180-day rate.
+      - name: recurrences_within_180d
+        description: Number of related requests within 180 days of closure.
+
+  # ---------------------------------------------------------------- performance
+  - name: agg_monthly_service_performance
+    description: Monthly responsiveness by service category (D26). Grain month_start x service_category.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [month_start, service_category]
+    columns:
+      - name: requests_opened
+        description: Requests reported in the month.
+      - name: requests_closed
+        description: Requests closed in the month (including imputed and mass closures).
+      - name: net_change
+        description: opened - closed.
+      - name: median_resolution_days
+        description: Median resolution of requests closed in the month with a recorded closure time.
+      - name: p90_resolution_days
+        description: 90th percentile of the same.
+      - name: pct_resolved_within_7d
+        description: Share of the month's intake closed within 7 days; null until observable.
+      - name: pct_resolved_within_30d
+        description: Share of the month's intake closed within 30 days; null until observable.
+      - name: open_at_month_end
+        description: Reconstructed backlog on the month's last observed day.
+      - name: is_partial_month
+        description: Go-live month (Oct 2023) or the current month.
+
+  - name: agg_backlog_daily
+    description: End-of-day backlog size, age distribution and flow per category (D25). Grain snapshot_date x service_category.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [snapshot_date, service_category]
+    columns: &backlog_columns
+      - name: snapshot_date
+        description: Local date; values are end-of-day.
+      - name: requests_opened
+        description: Requests reported that day.
+      - name: requests_closed
+        description: Requests closed that day (valid closures).
+      - name: net_backlog_change
+        description: opened - closed.
+      - name: open_requests
+        description: Requests open at end of day.
+      - name: median_age_days
+        description: Median age of open requests (approximate quantile, 1% resolution).
+      - name: p90_age_days
+        description: 90th-percentile age of open requests.
+      - name: open_under_7d
+        description: Open requests aged under 7 days.
+      - name: open_7_30d
+        description: Aged 7-30 days.
+      - name: open_31_90d
+        description: Aged 31-90 days.
+      - name: open_91_180d
+        description: Aged 91-180 days.
+      - name: open_over_180d
+        description: Aged over 180 days.
+      - name: pct_open_over_30d
+        description: Share of the backlog older than 30 days.
+      - name: pct_open_over_90d
+        description: Share of the backlog older than 90 days.
+      - name: is_burn_in_period
+        description: Before 2024-04-15 - backlog still accumulating from the Oct 2023 go-live; exclude from trend statements.
+
+  - name: agg_backlog_daily_total
+    description: Same measures as agg_backlog_daily across all categories (grain snapshot_date); medians over the whole open population.
+    columns:
+      - name: snapshot_date
+        data_tests: [unique, not_null]
+
+  - name: agg_backlog_age
+    description: Long-format backlog by age band for stacked charts. Grain snapshot_date x service_category x age_band.
+    columns:
+      - name: age_band
+        description: "'1. Under 7 days' ... '5. Over 180 days'."
+      - name: open_requests
+        description: Open requests at end of day in the band.
+
+  - name: agg_backlog_cohorts
+    description: Monthly intake cohorts - how fast each month's requests closed and how many remain open.
+    columns:
+      - name: cohort_month
+        description: Month reported.
+      - name: closed_within_7d
+        description: Closed within 7 days of report; null if the cohort is younger than 7 days.
+      - name: still_open
+        description: Still open at the data cut-off.
+      - name: cohort_observed_days
+        description: Days between the cohort month's last day and the data cut-off.
+
+  - name: agg_geography_performance
+    description: Geographic comparison across all categories. Grain geography_type x geography_id. No per-capita rates.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [geography_type, geography_id]
+    columns:
+      - name: geography_type
+        description: census_tract / council_district / zip_code.
+      - name: recurrence_rate_90d
+        description: Primary-definition 90-day recurrence rate of originals in the geography.
+      - name: persistent_locations
+        description: Locations with is_persistent in the geography.
+
+  # ---------------------------------------------------------------- recurrence
+  - name: fact_request_recurrence
+    description: One row per recurrence relationship under the primary definition (D22), up to 180 days after closure.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [original_request_id, recurring_request_id]
+    columns:
+      - name: original_request_id
+        description: FK to fact_service_requests (the closed request).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('fact_service_requests')
+                field: request_id
+      - name: recurring_request_id
+        description: FK to fact_service_requests (the later related request).
+      - name: location_id
+        description: Location of the original.
+      - name: days_between
+        description: Days from original closure to the recurring request's report.
+      - name: distance_m
+        description: Distance between the two points (null when matched by address without coordinates).
+      - name: is_same_address
+        description: Matched on the same address key.
+      - name: is_same_request_type
+        description: Same source request type (all rows share the service category).
+      - name: recurrence_window
+        description: 0-30 / 31-90 / 91-180 days.
+      - name: recurrence_sequence
+        description: Order of this recurrence among the original's recurrences (1 = first).
+
+  - name: agg_service_recurrence
+    description: Durability by service category under the primary definition, with median resolution for the speed vs durability comparison.
+    columns:
+      - name: service_category
+        data_tests: [unique, not_null]
+      - name: recurrence_originals
+        description: Eligible originals (closed condition reports with a usable location).
+      - name: eligible_90d
+        description: Originals observed for 90+ days after closure.
+      - name: recurred_90d
+        description: Of those, followed by a related request within 90 days.
+      - name: recurrence_rate_90d
+        description: recurred_90d / eligible_90d (same pattern for 30d and 180d).
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: median_days_to_recurrence
+        description: Median days to first recurrence among originals that recurred within 180 days.
+      - name: median_resolution_days
+        description: Median resolution time of the category's originals.
+
+  - name: agg_recurrence_sensitivity
+    description: Phase E sensitivity grid - recurrence rate by location rule x match level x window, per category and overall.
+    columns:
+      - name: scope
+        description: Service category, or 'All condition reports'.
+      - name: location_rule
+        description: Same address only / Address or within 25|50|100 m / Primary (hybrid).
+      - name: match_level
+        description: request type / category / family.
+      - name: window_days
+        description: 30 / 90 / 180.
+      - name: recurrence_rate
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: is_headline_definition
+        description: The single definition used for headline numbers (primary, 90 days).
+
+  - name: agg_persistent_locations
+    description: Locations with 3+ condition reports, with persistence metrics and tier (D27). Grain location_id.
+    columns:
+      - name: location_id
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_id
+      - name: condition_requests
+        description: Condition-report requests at the location.
+      - name: total_requests
+        description: All requests at the location, including administrative ones.
+      - name: active_months
+        description: Distinct months with at least one condition report.
+      - name: active_years
+        description: Distinct calendar years with at least one condition report.
+      - name: recurrence_cycles
+        description: Close-then-return events (originals with a 90-day recurrence).
+      - name: dominant_category
+        description: Most frequent service category.
+      - name: dominant_category_share
+        description: Share of condition reports in the dominant category.
+      - name: unresolved_requests
+        description: Currently open condition reports.
+      - name: avg_days_between_requests
+        description: (latest - first) / (requests - 1).
+      - name: persistence_tier
+        description: 1. Chronic (10+ requests, 6+ months, 4+ cycles) / 2. Persistent (5+, 3+, 2+) / 3. Repeat / Excluded.
+      - name: is_persistent
+        description: Tier 1 or 2.
+      - name: persistence_rank
+        description: Rank by recurrence cycles then requests (1 = most persistent).

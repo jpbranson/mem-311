@@ -1,5 +1,5 @@
 {#
-  Requests that can be the *original* in a recurrence relationship (D14, D19, D21):
+  Requests that can be the *original* in a recurrence relationship (D14, D19, D21, D28):
   closed condition reports with a recorded, valid closure time, not closed as duplicates, not load artifacts,
   opened in the analysis window, with a usable location (address key or valid coordinates).
   follow_up_days = days observed after closure before the data cut-off; a window W is only evaluated
@@ -30,6 +30,6 @@ where r.is_condition_report
   and r.status_group = 'closed'
   and not r.closed_at_is_imputed
   and not r.has_invalid_resolution_time
-  and r.closure_outcome != 'duplicate'
+  and r.closure_outcome not in ('duplicate', 'administrative_mass_closure')
   and (r.address_key is not null or r.geo_point is not null)
   and r.closed_date <= m.data_through_date
