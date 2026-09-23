@@ -128,6 +128,9 @@ a day after closure. There were city-wide bulk edits: over 24k records were touc
 2025-09-22, 2025-09-23 and 2025-09-30. Deletions cannot be seen by a watermark query. Full extraction takes
 about 2 minutes, so a weekly full snapshot is cheap.
 
+**Schedule.** `.github/workflows/refresh.yml` runs incremental Monday to Saturday and full on Sunday, at
+11:00 UTC, each followed by `dbt build`. The 48 h lookback comfortably covers a missed day.
+
 ## D08 — Keys
 
 **Decision.** `OBJECTID` is the record key through raw and staging. `INCIDENT_NUMBER` (the city's "Service
