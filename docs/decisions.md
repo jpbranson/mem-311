@@ -1,6 +1,7 @@
 # Decision Log
 
-Every judgment call made while building the project, in the order it was made. Each entry records what was
+Every judgment call made while building the project, in the order it was made. Metric definitions and how
+the pieces fit together are in [`methodology.md`](methodology.md). Each entry records what was
 decided, the evidence behind it, the alternatives considered and what it affects downstream. Evidence counts
 come from the full extraction of 2026-09-23 (406,902 records) unless stated otherwise.
 
@@ -26,6 +27,16 @@ come from the full extraction of 2026-09-23 (406,902 records) unless stated othe
 | D18 | Geography | Use Census tracts (spatial join), council district (source field) and ZIP; no neighborhoods |
 | D19 | Closure | Classify closure outcomes heuristically from resolution text |
 | D20 | Tooling | Python 3.12 via uv; dbt-bigquery with service-account auth from an env var |
+| D21 | Recurrence | Only closed, dated, non-duplicate condition reports with a usable location can be an original |
+| D22 | Recurrence | Primary definition: same category, same address (or ≤25 m for public-space problems), 90 days; right-censored |
+| D23 | Location | Location entity = address key when a house number exists, else an 8-character geohash cell |
+| D24 | Performance | Spatial matching via a grid-cell equi-join plus exact distance check, not a bare `ST_DWITHIN` join |
+| D25 | Backlog | Reconstruct the daily backlog from open/close dates; flag a 181-day burn-in after go-live |
+| D26 | Responsiveness | Count events in the month they happen; resolution percentiles by closure month |
+| D27 | Persistence | Chronic / Persistent / Repeat tiers from request count, active months and recurrence cycles |
+| D28 | Quality | Treat the 2025-09-22 administrative mass closure as a backlog exit, not a resolution |
+| D29 | Location | Street-level geocodes (street name without house number) are excluded from distance matching |
+| D30 | Validation | Manual review of an 80-pair stratified sample; headline definition kept, false-match risks documented |
 
 ---
 
@@ -298,3 +309,147 @@ so no credential path is committed. dbt writes custom schemas as literal dataset
 `intermediate`, `analytics`) via a `generate_schema_name` override.
 
 **Reason.** uv initially resolved Python 3.14, which dbt 1.12 does not officially support.
+
+## D21 — Who can be the original in a recurrence relationship
+
+**Decision.** An original must be a condition report (D14) opened in the analysis window, closed with a
+recorded closure time (not imputed, D11), with a non-negative resolution time (D12), not closed as a
+duplicate (D19) or in the mass closure (D28), not a load artifact (D16), and with an address key or a valid
+match point (D23, D29). The follower (the "recurring" request) must be a condition report in the same
+recurrence family, opened after the original closed.
+
+**Evidence.** 299,839 of 345,016 closed condition reports qualify. The largest exclusions are the mass
+closure (24,632 requests of all types), imputed closure times (16,883 of all types) and duplicate closures
+(4,956).
+
+**Reason.** Recurrence is measured from the moment the city said the problem was dealt with. Without a
+trustworthy closure time there is no starting point for the window.
+
+## D22 — Primary recurrence definition and right-censoring
+
+**Decision.** The headline ("primary") definition is: a follower in the **same service category**, opened within
+**90 days** after the original closed, at the **same address key**. For *public-space* request types (potholes,
+street cleaning, signs, trees, litter, drainage…) a follower within **25 m** also counts. For *property* types
+(missed collection, carts, code enforcement, weeds…) the 25 m radius is only used when one of the two
+requests lacks an address key. The split is the `location_match_basis` column of the request-type seed
+(61 property types, 105 public-space types).
+
+A window of W days is only evaluated for originals closed at least W days before the data cut-off. Recent
+closures are *not eligible* rather than counted as "did not recur".
+
+**Evidence.** On residential streets 25 m spans two or three neighbouring houses. For a missed-garbage report
+next door, that is a different customer and a different failure. For a pothole or a clogged inlet, a 25 m
+offset is ordinary geocoding noise for the same defect. Without right-censoring, every closure in the last 90
+days would count as a non-recurrence. That biases the 90-day rate down in exactly the months a dashboard
+user looks at first.
+
+**Alternatives.** Every combination of location rule (same address; address or 25/50/100 m), match level
+(request type / category / family) and window (30/90/180) is computed in `agg_recurrence_sensitivity`. The
+headline number is one stated point in that grid, not the only definition (see methodology, Phase E).
+
+## D23 — Location entity
+
+**Decision.** A request's location is its **address key** (normalized address with a non-zero house number,
+trailing street type removed) when available. Otherwise it is the **8-character geohash** (~38 m × 19 m) of a
+valid, non-street-level coordinate. An address key whose points are more than 250 m apart is flagged
+`is_spatially_inconsistent` and excluded from persistent-location rankings.
+
+**Evidence.** 390,669 of 405,398 in-window requests (96.4%) have an address key. 10,520 more fall into
+8,143 grid cells. 4,209 have no usable location. 661 of 144,499 address locations are spatially
+inconsistent: points more than 250 m apart share one address key.
+
+**Normalization** (`dbt/macros/normalize_address.sql`) drops a leading business name before a house number
+("Dollar General, 1234 Getwell Rd"), city/state/ZIP, unit designators and punctuation. It abbreviates
+street types and directionals and reduces a house-number range to its first number. "2785 CLAUDETTE" and
+"2785 CLAUDETTE RD" share a key.
+
+## D24 — Spatial matching via grid cells
+
+**Decision.** Candidate pairs within 100 m are found with an equi-join on ~105 m grid cells. Each follower is
+expanded to its 3×3 cell neighbourhood, and an exact `ST_DWITHIN` check on the joined rows follows. Address
+matches come from a separate equi-join on the address key. The union of both is the candidate table
+(`int_recurrence_candidates`). Every stricter definition is a filter on it.
+
+**Evidence.** A direct `ST_DWITHIN` join carrying the family and time-window predicates did not finish within
+10 minutes.
+
+## D25 — Backlog reconstruction and burn-in
+
+**Decision.** The source publishes no status history. A request is therefore assumed open at the end of every
+local day from its opened date to the day before its final closure (or to the data cut-off). Imputed closures
+(D11) are used as exit dates. Backlog age = snapshot date − opened date. Snapshots before
+**2024-04-15** (181 days after the 2023-10-16 go-live) are flagged `is_burn_in_period`. Before that date the
+>180-day band cannot yet contain anything and the total is still filling up from zero.
+
+**Consequence.** Reopen/close cycles are invisible: a request closed, reopened and closed again is treated as
+open for the whole span. A dbt test (`assert_backlog_conserves_flow`) checks that the day-over-day change in
+open requests equals opened − closed.
+
+## D26 — Responsiveness counting rules
+
+**Decision.** In the monthly mart, `requests_opened` counts the month of opening and `requests_closed` the month
+of closure. Median and P90 resolution time describe requests **closed** in the month, using only recorded,
+valid, non-mass closures. `pct_resolved_within_7d/30d` describe the **opening cohort** and stay null until the
+month's last day is at least 7 or 30 days before the cut-off.
+
+**Reason.** Measuring resolution time for requests *opened* in a month makes recent months look faster than
+they are, because only the quickly closed requests have closed yet.
+
+## D27 — Persistent-location tiers
+
+**Decision.** Among locations with 3+ condition reports:
+* **Chronic**: ≥10 condition reports, active in ≥6 distinct months, ≥4 recurrence cycles
+* **Persistent**: ≥5 condition reports, ≥3 active months, ≥2 recurrence cycles
+* **Repeat**: everything else with 3+ reports
+
+A recurrence cycle is a closure at the location followed within 90 days by a primary-definition recurrence.
+`is_persistent` covers Chronic and Persistent.
+
+**Evidence.** 44,818 locations have 3+ condition reports: 1,972 Chronic, 6,658 Persistent, 35,729 Repeat
+and 459 excluded as spatially inconsistent. The thresholds separate "busy address" from "problem keeps
+coming back". A location with 20 unrelated one-off reports and no recurrence cycles stays in Repeat.
+
+## D28 — The 2025-09-22 administrative mass closure
+
+**Decision.** A closure day is a **mass closure** if it has ≥10× the median daily number of closures and ≥80%
+of its closures are more than 30 days old. Requests closed on such a day get `closure_outcome =
+'administrative_mass_closure'`. They leave the backlog on that day, but they have no resolution time and
+cannot be recurrence originals.
+
+**Evidence.** Exactly one day qualifies. On 2025-09-22, 24,632 requests were closed, most of them aged. The
+total backlog fell from 35,860 (2025-09-01) to 10,438 (2025-10-01). This coincides with the city-wide bulk
+edits noted in D07. Counting these as resolutions would put a spike of multi-month resolution times into
+September 2025. Counting them as recurrence originals would add thousands of "closures" that describe no
+service event.
+
+## D29 — Street-level geocodes
+
+**Decision.** A request whose address is a street name with no house number (not an intersection), sharing a
+coordinate with 2+ other such requests, is a **street-level geocode**. It keeps its coordinates for mapping but
+gets no `match_point`, so it cannot drive distance-based recurrence matches.
+
+**Evidence.** Found during manual validation. Requests giving only a street name geocode to one point per
+street, so every pothole on that street "recurred" within 0 m. 4,091 requests are flagged.
+
+## D30 — Manual validation of recurrence matches
+
+**Decision.** Keep the primary definition (D22). Record the false-match patterns found in a stratified review.
+Do not exclude originals based on their closure outcome; keep it as a filterable dimension.
+
+**Evidence.** `dbt/analyses/recurrence_validation_sample.sql` draws a deterministic sample of four first
+recurrences per category (80 pairs). The review of 2026-09-23 found:
+* **Location.** 75 of 80 pairs clearly refer to the same place: same address, or nearby points on a
+  public-space problem. The questionable five are a pothole pair at the placeholder address
+  "0 WINCHESTER RD", three pairs at one park address (1264 Wellsville Rd) where different equipment at a large
+  site shares an address, and a graffiti pair at 6140/6141 Poplar Ave, on opposite sides of the street.
+* **Problem.** 4 pairs join different problems within one category: a missed bulk-trash pickup followed 73
+  days later by a missed recycling pickup, a garbage-cart repair refiled as a recycling-cart repair, a
+  construction inspection followed by a curb-ramp request, and a sign followed by a signal.
+* **Closure without work.** Roughly one in five originals was closed without work: referred to MLGW or
+  TDOT, "private property", "outside city limits", "didn't see anything". There the follow-up report is a
+  genuine re-report of an unresolved condition, but not evidence of a failed repair.
+
+A population check shows the last point does not drive the headline. The 90-day rate is 22.1% for all eligible
+originals and 21.9% for originals closed as `completed_or_unspecified`. Misrouted originals recur at 45.7%,
+mostly because residents refile under the right type. Overall, 71 of 80 sampled pairs (89%) are same-place,
+same-problem matches. With n = 80 this is a rough precision estimate, not a measured rate.
