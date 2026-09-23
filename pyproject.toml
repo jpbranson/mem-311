@@ -1,0 +1,13 @@
+[project]
+name = "mem-311"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "db-dtypes>=1.7.1",
+    "dbt-bigquery>=1.10",
+    "dbt-core>=1.10",
+    "google-cloud-bigquery>=3.45.2",
+    "pandas>=3.0.6",
+    "pyarrow>=25.0.1",
+    "requests>=2.34.2",
+]
