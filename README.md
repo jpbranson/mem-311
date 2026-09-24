@@ -14,7 +14,8 @@ Most 311 dashboards stop at volume and time-to-close. This project adds two long
 
 ## Key findings
 
-Data: 405,398 requests, October 2023 to September 2026. Full write-up: [`docs/findings.md`](docs/findings.md).
+Data: 405,398 requests, October 2023 to September 2026 (snapshot extracted 2026-09-23; the warehouse itself
+refreshes daily). Full write-up: [`docs/findings.md`](docs/findings.md).
 
 1. **Fast is not the same as durable.** Sewer backups close in half a day, but 21% return to the same address
    within 90 days. Cave-ins take three weeks and 9% return. Across categories, speed barely predicts
@@ -34,6 +35,7 @@ Data: 405,398 requests, October 2023 to September 2026. Full write-up: [`docs/fi
 ```mermaid
 flowchart LR
     A["Memphis 311 ArcGIS<br/>FeatureServer"] -->|"keyset-paged REST<br/>PII dropped at source"| B["Python extractor<br/>ingestion/extract_311.py"]
+    S["GitHub Actions<br/>daily 11:00 UTC"] -.->|"scripts/run_pipeline.py"| B
     B -->|"append-only batches"| C[("BigQuery<br/>raw")]
     C --> D["dbt staging<br/>latest version per record,<br/>local time, status rules"]
     R["request_type_map seed<br/>166 types → 24 categories"] --> E
@@ -58,6 +60,7 @@ ingestion/extract_311.py      API → BigQuery raw (full or incremental)
 dbt/                          staging → intermediate → analytics models, seed, tests, analyses
 scripts/run_pipeline.py       extract + dbt build + docs + data dictionary in one command
 scripts/                      data-dictionary generator, tract-shape export for Power BI
+.github/workflows/refresh.yml scheduled pipeline run (incremental Mon–Sat, full snapshot Sun)
 powerbi/                      DAX measures, theme, map shapes, build guide, validation SQL
 docs/findings.md              key findings
 docs/methodology.md           metric definitions, recurrence method, sensitivity, validation, limitations

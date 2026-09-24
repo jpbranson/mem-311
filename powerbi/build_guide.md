@@ -296,6 +296,8 @@ closed requests, so small differences are expected).
 
 ## 6. Refresh
 
-The pipeline is `uv run python scripts/run_pipeline.py` (extract, then `dbt build`). After it runs, click
-Refresh in Power BI Desktop, or schedule a refresh in the Power BI Service. Scheduled refresh uses the
+The pipeline is `uv run python scripts/run_pipeline.py` (extract, then `dbt build`). It runs automatically
+every day at 11:00 UTC via GitHub Actions (`.github/workflows/refresh.yml`) and usually finishes within
+5 minutes. After it runs, click Refresh in Power BI Desktop, or schedule a refresh in the Power BI Service
+for 12:00 UTC or later. Scheduled refresh uses the
 service-account credential; no gateway is needed for BigQuery.
