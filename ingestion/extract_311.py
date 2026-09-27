@@ -243,6 +243,13 @@ def record_batch(bq: bigquery.Client, rec: dict) -> None:
     job.result()
 
 
+def save_batch(rec: dict) -> None:
+    """Leave this run's batch record for scripts/run_pipeline.py's status file (D31)."""
+    path = Path(__file__).resolve().parent.parent / "logs" / "last_batch.json"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(json.dumps(rec) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=["full", "incremental"], required=True)
@@ -291,6 +298,10 @@ def main() -> int:
         # Validation: incremental windows can gain records mid-run, so allow growth but never shrinkage.
         if len(rows) < expected or (args.mode == "full" and len(rows) > expected * 1.01):
             raise RuntimeError(f"record count mismatch: expected {expected}, extracted {len(rows)}")
+        # An empty full snapshot would pass the check above (0 of 0), become the latest full snapshot and
+        # empty stg_311_requests (D32). An empty incremental batch is fine.
+        if args.mode == "full" and not rows:
+            raise RuntimeError("full extraction returned 0 rows; not recording an empty snapshot")
         max_edit = max((r["last_edited_date"] for r in rows if r["last_edited_date"]), default=None)
 
         if args.dump:
@@ -313,6 +324,7 @@ def main() -> int:
         batch.update(expected_count=expected, extracted_count=len(rows), loaded_count=loaded,
                      max_last_edited=max_edit, status="success",
                      finished_at=dt.datetime.now(dt.timezone.utc).isoformat())
+        save_batch(batch)
         record_batch(bq, batch)
         log.info("batch %s succeeded: %d rows loaded", batch_id, loaded)
         return 0
@@ -320,6 +332,7 @@ def main() -> int:
         log.exception("batch %s failed", batch_id)
         batch.update(status="failed", message=str(exc)[:1000],
                      finished_at=dt.datetime.now(dt.timezone.utc).isoformat())
+        save_batch(batch)
         record_batch(bq, batch)
         raise
 

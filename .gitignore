@@ -5,6 +5,7 @@ __pycache__/
 *.pyc
 data/
 logs/
+status/
 dbt/target/
 dbt/dbt_packages/
 dbt/logs/
