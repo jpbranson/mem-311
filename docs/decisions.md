@@ -456,3 +456,31 @@ A population check shows the last point does not drive the headline. The 90-day 
 originals and 21.9% for originals closed as `completed_or_unspecified`. Misrouted originals recur at 45.7%,
 mostly because residents refile under the right type. Overall, 71 of 80 sampled pairs (89%) are same-place,
 same-problem matches. With n = 80 this is a rough precision estimate, not a measured rate.
+
+## D31 — A status file for the project tracker
+
+**Decision.** Every refresh writes `status/status.json` in the status contract of the project tracker
+(github-project-tracker, DESIGN.md §2). The workflow's `publish-status` job uploads it as `status.json` on the
+fixed-tag prerelease `status`, a stable URL. The status is:
+* `fail` when a stage fails. `detail` names the stage, plus the extract's message when the extract failed.
+* `warn` when the run succeeded but the source's newest edit (`max_last_edited`) is more than two days old.
+* `ok` otherwise. A 0-row incremental batch is still `ok` (decided 2026-09-27).
+
+A successful run's `last_success_at` is when it finished, and the tracker judges its age against a daily
+cadence, so a refresh that stops running reads as stale.
+
+**Evidence.** `raw.ingestion_batches` records `success` for 0-row and stale-upstream extractions, and covers
+the extract only. The `run_results.json` artifact comes from `dbt docs generate`, so it never holds test
+results. Neither shows a bad day. Only `publish-status` has `contents: write`; it checks out no code, so the
+pipeline and its dbt packages keep read-only access.
+
+## D32 — An empty full extraction fails
+
+**Decision.** A full extraction that returns 0 rows raises, so its batch is recorded as `failed` and the run
+stops at the extract. An incremental batch with 0 rows is still a success (D31).
+
+**Evidence.** If the API ever answered the Sunday count with 0 matches, the count check would pass (0 of 0)
+and the empty batch would be recorded as a success. `stg_311_requests` treats the newest successful full batch
+as the snapshot of live requests (D06, D07), so staging would hold only rows from later incremental batches
+until the next successful full run. The source has held over 400,000 requests, so an empty full layer means
+an outage or a permission change, not a real state of the data.

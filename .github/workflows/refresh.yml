@@ -63,3 +63,45 @@ jobs:
             dbt/target/run_results.json
           retention-days: 14
           if-no-files-found: ignore
+
+      - name: Keep the status file for publish-status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: status
+          path: status/status.json
+          retention-days: 1
+          if-no-files-found: ignore
+
+  # Publishes status.json on the fixed-tag prerelease "status" for the project tracker (docs/decisions.md D31).
+  # The only job that can write to the repository; it checks out no code, so the pipeline and its dbt
+  # packages never run with write access.
+  publish-status:
+    needs: refresh
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: status
+          path: status
+
+      - name: Publish status.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          RESULT: ${{ needs.refresh.result }}
+        run: |
+          if [ ! -s status/status.json ]; then  # the run ended before the pipeline wrote one
+            mkdir -p status
+            printf '{"status": "fail", "last_success_at": null, "expect_every": "1d", "detail": "refresh run %s ended (%s) before the pipeline wrote its status"}\n' \
+              "$RUN_ID" "$RESULT" > status/status.json
+          fi
+          gh release view status >/dev/null 2>&1 || gh release create status --prerelease --title "Pipeline status" \
+            --notes "Status of the latest refresh, read by the project tracker. status.json is replaced by every run; see docs/decisions.md D31." \
+            || gh release view status >/dev/null
+          gh release upload status status/status.json --clobber
