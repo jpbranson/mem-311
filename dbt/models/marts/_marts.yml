@@ -429,7 +429,15 @@ models:
       - name: recurrence_cycles
         description: Close-then-return events (originals with a 90-day recurrence).
       - name: recurrence_cycles_band
-        description: 0 / 1 / 2-3 / 4-9 / 10+ for the cycle distribution chart.
+        description: 0 / 1 / 2-3 / 4-9 / 10+ for the cycle distribution chart; sort by recurrence_cycles_band_order.
+      - name: recurrence_cycles_band_order
+        description: 0-4 in band order; use as the sort-by column for recurrence_cycles_band.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4]
+                quote: false
       - name: dominant_category
         description: Most frequent service category.
       - name: dominant_category_share

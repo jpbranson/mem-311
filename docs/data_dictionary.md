@@ -72,7 +72,7 @@ One row per live Memphis 311 request, latest extracted version. Live means prese
 
 ## Intermediate — `intermediate` dataset
 
-### `int_backlog_daily_open` · 17,657,195 rows
+### `int_backlog_daily_open` · 17,719,320 rows
 
 One row per request per local day it was open at end of day (D25).
 
@@ -83,7 +83,7 @@ One row per request per local day it was open at end of day (D25).
 | `service_category` | STRING |  |
 | `age_days` | INT64 |  |
 
-### `int_recurrence_candidates` · 1,082,099 rows
+### `int_recurrence_candidates` · 1,087,939 rows
 
 All original/follower pairs under the loosest definition (family, 100 m or same address, 180 days).
 
@@ -106,7 +106,7 @@ All original/follower pairs under the loosest definition (family, 100 m or same 
 | `both_have_address_key` | BOOL |  |
 | `is_primary_match` | BOOL | Pair satisfies the primary recurrence definition (D22). |
 
-### `int_recurrence_originals` · 299,839 rows
+### `int_recurrence_originals` · 301,628 rows
 
 Requests eligible to be the original in a recurrence relationship, with observed follow-up days (D21, D22).
 
@@ -129,7 +129,7 @@ Requests eligible to be the original in a recurrence relationship, with observed
 | `match_point` | GEOGRAPHY |  |
 | `follow_up_days` | INT64 |  |
 
-### `int_recurrence_outcomes` · 299,839 rows
+### `int_recurrence_outcomes` · 301,628 rows
 
 One row per recurrence original with first-recurrence timing and censoring-aware window flags.
 
@@ -150,7 +150,7 @@ One row per recurrence original with first-recurrence timing and censoring-aware
 | `is_eligible_180d` | BOOL |  |
 | `has_recurrence_180d` | BOOL |  |
 
-### `int_request_locations` · 406,902 rows
+### `int_request_locations` · 408,385 rows
 
 Location attributes per request - normalized address, matching key, coordinate validity, Census tract, location entity (D17, D18, D23).
 
@@ -171,7 +171,7 @@ Location attributes per request - normalized address, matching key, coordinate v
 | `census_tract_geoid` | STRING | 11-digit Census tract GEOID from point-in-polygon. |
 | `location_key` | STRING | 'A/<address_key>' or 'G/<geohash8>' (D23). |
 
-### `int_requests_enriched` · 406,902 rows
+### `int_requests_enriched` · 408,385 rows
 
 One row per request with classification, closure outcome, resolution time, data-quality flags and location entity.
 
@@ -247,7 +247,7 @@ One row per request with classification, closure outcome, resolution time, data-
 
 ## Analytics marts (Power BI) — `analytics` dataset
 
-### `agg_backlog_age` · 108,263 rows
+### `agg_backlog_age` · 108,601 rows
 
 Long-format backlog by age band for stacked charts. Grain snapshot_date x service_category x age_band.
 
@@ -258,7 +258,7 @@ Long-format backlog by age band for stacked charts. Grain snapshot_date x servic
 | `age_band` | STRING | '1. Under 7 days' ... '5. Over 180 days'. |
 | `open_requests` | INT64 | Open requests at end of day in the band. |
 
-### `agg_backlog_cohorts` · 848 rows
+### `agg_backlog_cohorts` · 849 rows
 
 Monthly intake cohorts - how fast each month's requests closed and how many remain open.
 
@@ -274,7 +274,7 @@ Monthly intake cohorts - how fast each month's requests closed and how many rema
 | `still_open` | INT64 | Still open at the data cut-off. |
 | `cohort_observed_days` | INT64 | Days between the cohort month's last day and the data cut-off. |
 
-### `agg_backlog_daily` · 26,112 rows
+### `agg_backlog_daily` · 26,184 rows
 
 End-of-day backlog size, age distribution and flow per category (D25). Grain snapshot_date x service_category.
 
@@ -297,7 +297,7 @@ End-of-day backlog size, age distribution and flow per category (D25). Grain sna
 | `pct_open_over_90d` | FLOAT64 | Share of the backlog older than 90 days. |
 | `is_burn_in_period` | BOOL | Before 2024-04-15 - backlog still accumulating from the Oct 2023 go-live; exclude from trend statements. |
 
-### `agg_backlog_daily_total` · 1,088 rows
+### `agg_backlog_daily_total` · 1,091 rows
 
 Same measures as agg_backlog_daily across all categories (grain snapshot_date); medians over the whole open population.
 
@@ -359,7 +359,7 @@ Monthly responsiveness by service category (D26). Grain month_start x service_ca
 | `open_at_month_end` | INT64 | Reconstructed backlog on the month's last observed day. |
 | `is_partial_month` | BOOL | Go-live month (Oct 2023) or the current month. |
 
-### `agg_persistent_locations` · 44,818 rows
+### `agg_persistent_locations` · 45,021 rows
 
 Locations with 3+ condition reports, with persistence metrics and tier (D27). Grain location_id.
 
@@ -381,7 +381,8 @@ Locations with 3+ condition reports, with persistence metrics and tier (D27). Gr
 | `active_months` | INT64 | Distinct months with at least one condition report. |
 | `active_years` | INT64 | Distinct calendar years with at least one condition report. |
 | `recurrence_cycles` | INT64 | Close-then-return events (originals with a 90-day recurrence). |
-| `recurrence_cycles_band` | STRING | 0 / 1 / 2-3 / 4-9 / 10+ for the cycle distribution chart. |
+| `recurrence_cycles_band` | STRING | 0 / 1 / 2-3 / 4-9 / 10+ for the cycle distribution chart; sort by recurrence_cycles_band_order. |
+| `recurrence_cycles_band_order` | INT64 | 0-4 in band order; use as the sort-by column for recurrence_cycles_band. |
 | `recurrence_eligible_closures` | INT64 |  |
 | `dominant_category` | STRING | Most frequent service category. |
 | `dominant_category_requests` | INT64 |  |
@@ -445,7 +446,7 @@ Shelby County Census tracts (221) with simplified WKT geometry and centroid (D18
 | `centroid_longitude` | FLOAT64 |  |
 | `tract_wkt` | STRING | Tract polygon simplified to 10 m, WKT (for the Icon Map visual). |
 
-### `dim_date` · 1,453 rows
+### `dim_date` · 1,456 rows
 
 Calendar dimension from the analysis start through one year past the data cut-off.
 
@@ -469,7 +470,7 @@ Calendar dimension from the analysis start through one year past the data cut-of
 | `is_backlog_burn_in` | BOOL | Before 2024-04-15; backlog still building up from the Oct 2023 go-live (D25). |
 | `is_current_month` | BOOL | Month containing data_through_date (partial). |
 
-### `dim_location` · 152,642 rows
+### `dim_location` · 152,932 rows
 
 Derived location entity (D23) - one row per address key or ~38 m x 19 m geohash cell.
 
@@ -520,7 +521,7 @@ One row per standardized service category - the shared slicer dimension for fact
 | `request_count` | INT64 |  |
 | `volume_rank` | INT64 | Rank by total request volume (1 = largest); use as a sort-by column. |
 
-### `fact_request_recurrence` · 160,707 rows
+### `fact_request_recurrence` · 161,544 rows
 
 One row per recurrence relationship under the primary definition (D22), up to 180 days after closure.
 
@@ -539,7 +540,7 @@ One row per recurrence relationship under the primary definition (D22), up to 18
 | `recurrence_window` | STRING | 0-30 / 31-90 / 91-180 days. |
 | `recurrence_sequence` | INT64 | Order of this recurrence among the original's recurrences (1 = first). |
 
-### `fact_service_requests` · 405,398 rows
+### `fact_service_requests` · 406,881 rows
 
 One row per 311 service request reported on or after 2023-10-01, excluding the bulk-load artifact (D09, D16). Carries responsiveness, backlog and recurrence attributes so Power BI measures can slice by any dimension.
 

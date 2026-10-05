@@ -82,6 +82,13 @@ select
         when a.recurrence_cycles <= 9 then '4-9'
         else '10+'
     end                                                                as recurrence_cycles_band,
+    case
+        when a.recurrence_cycles = 0 then 0
+        when a.recurrence_cycles = 1 then 1
+        when a.recurrence_cycles <= 3 then 2
+        when a.recurrence_cycles <= 9 then 3
+        else 4
+    end                                                                as recurrence_cycles_band_order,
     a.recurrence_eligible_closures,
     d.dominant_category,
     d.dominant_category_requests,
