@@ -1,5 +1,5 @@
 {#
-  Candidate recurrence pairs under the *loosest* definition considered (docs/methodology.md, Phases A-D):
+  Candidate recurrence pairs under the *loosest* definition considered (docs/methodology/recurrence.md, Phases A-D):
     original = row of int_recurrence_originals
     follower = any condition report in the same recurrence family, opened after the original closed and within
                max_window_days of that closure, at the same address key OR within max_match_radius_m.

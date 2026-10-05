@@ -1,5 +1,5 @@
 {#
-  Phase A address standardization (see docs/methodology.md, "Location matching").
+  Phase A address standardization (see docs/methodology/recurrence.md, "Location matching").
   Returns the house-number + street form: a leading business/place name dropped when a house-number segment
   follows it, then uppercase, city/state/ZIP, unit designators and punctuation removed,
   street types and directionals abbreviated, a leading house-number range reduced to its first number.

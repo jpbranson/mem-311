@@ -5,7 +5,7 @@ measures, theme and map shapes are all in this repo. What remains is assembling 
 which can't be scripted here. Allow about 3–4 hours.
 
 The pothole page (plan Page 5) is **not built**. The data cannot support it (decision D15 in
-[`docs/decisions.md`](../docs/decisions.md)).
+[`docs/decisions/D15-pothole-analysis-omitted.md`](../docs/decisions/D15-pothole-analysis-omitted.md)).
 
 | File | Purpose |
 |---|---|
@@ -597,7 +597,7 @@ match levels are expected: the repository defines Primary (hybrid) for category 
 **Footnote:** "Recurrence = a related request (same service category) at the same address, or within 25 m for
 street and public-space problems, after the original was closed. Only requests observed for the full window
 count. It is an operational proxy: a return report may be an unfixed problem, a poor repair or a new incident.
-See docs/methodology.md."
+See docs/methodology/recurrence.md."
 
 ### Page 4 — Persistent Locations
 **Title:** *Where are chronic problems concentrated?*

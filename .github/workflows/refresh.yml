@@ -73,7 +73,7 @@ jobs:
           retention-days: 1
           if-no-files-found: ignore
 
-  # Publishes status.json on the fixed-tag prerelease "status" for the project tracker (docs/decisions.md D31).
+  # Publishes status.json on the fixed-tag prerelease "status" for the project tracker (D31, docs/decisions/D31-tracker-status-file.md).
   # The only job that can write to the repository; it checks out no code, so the pipeline and its dbt
   # packages never run with write access.
   publish-status:
@@ -102,6 +102,6 @@ jobs:
               "$RUN_ID" "$RESULT" > status/status.json
           fi
           gh release view status >/dev/null 2>&1 || gh release create status --prerelease --title "Pipeline status" \
-            --notes "Status of the latest refresh, read by the project tracker. status.json is replaced by every run; see docs/decisions.md D31." \
+            --notes "Status of the latest refresh, read by the project tracker. status.json is replaced by every run; see docs/decisions/D31-tracker-status-file.md." \
             || gh release view status >/dev/null
           gh release upload status status/status.json --clobber
