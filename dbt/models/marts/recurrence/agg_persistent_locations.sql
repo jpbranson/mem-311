@@ -3,7 +3,7 @@
   Only locations with 3+ condition reports in the analysis window are kept; isolated incidents are not.
     recurrence_cycles = requests at the location that were closed and then followed, within 90 days, by a
                         related request under the primary definition (a close -> return event)
-    persistence_tier  = Chronic / Persistent / Repeat, see docs/methodology.md
+    persistence_tier  = Chronic / Persistent / Repeat, see docs/methodology/persistent-locations.md
 #}
 with requests as (
     select * from {{ ref('fact_service_requests') }}
@@ -82,6 +82,13 @@ select
         when a.recurrence_cycles <= 9 then '4-9'
         else '10+'
     end                                                                as recurrence_cycles_band,
+    case
+        when a.recurrence_cycles = 0 then 0
+        when a.recurrence_cycles = 1 then 1
+        when a.recurrence_cycles <= 3 then 2
+        when a.recurrence_cycles <= 9 then 3
+        else 4
+    end                                                                as recurrence_cycles_band_order,
     a.recurrence_eligible_closures,
     d.dominant_category,
     d.dominant_category_requests,

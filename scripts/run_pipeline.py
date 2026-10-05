@@ -6,7 +6,7 @@ Usage:
     uv run python scripts/run_pipeline.py --skip-extract  # dbt only
 
 Requires GOOGLE_APPLICATION_CREDENTIALS to point at a service-account key with BigQuery access to mem-311.
-Every run, successful or not, writes status/status.json for the project tracker (docs/decisions.md D31).
+Every run, successful or not, writes status/status.json for the project tracker (D31, docs/decisions/D31-tracker-status-file.md).
 """
 import argparse
 import datetime as dt
@@ -77,8 +77,8 @@ def main() -> int:
         run([*dbt, "build", "--profiles-dir", "."], cwd=ROOT / "dbt")
         stage = "dbt docs"
         run([*dbt, "docs", "generate", "--profiles-dir", "."], cwd=ROOT / "dbt")
-        stage = "data dictionary"
-        run([sys.executable, "scripts/build_data_dictionary.py"])
+        stage = "knowledge bundle"
+        run([sys.executable, "scripts/build_knowledge.py"])
     except subprocess.CalledProcessError:
         write_status(stage)
         raise

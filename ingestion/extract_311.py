@@ -4,7 +4,7 @@ Usage:
     uv run python ingestion/extract_311.py --mode full
     uv run python ingestion/extract_311.py --mode incremental [--lookback-hours 48]
 
-Design (see docs/decisions.md):
+Design (see docs/decisions/, D01-D07 and D32):
   * The raw table is append-only. Every run writes a batch tagged with _batch_id / _ingested_at / _source.
     Staging picks the latest version of each OBJECTID, so re-running is idempotent downstream.
   * A full run snapshots every live record; incremental runs pull records whose last_edited_date is

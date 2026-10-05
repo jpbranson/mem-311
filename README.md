@@ -15,7 +15,7 @@ Most 311 dashboards stop at volume and time-to-close. This project adds two long
 ## Key findings
 
 Data: 405,398 requests, October 2023 to September 2026 (snapshot extracted 2026-09-23; the warehouse itself
-refreshes daily). Full write-up: [`docs/findings.md`](docs/findings.md).
+refreshes daily). Full write-up: [`docs/findings/`](docs/findings/index.md).
 
 1. **Fast is not the same as durable.** Sewer backups close in half a day, but 21% return to the same address
    within 90 days. Cave-ins take three weeks and 9% return. Across categories, speed barely predicts
@@ -58,14 +58,17 @@ flowchart LR
 ```text
 ingestion/extract_311.py      API → BigQuery raw (full or incremental)
 dbt/                          staging → intermediate → analytics models, seed, tests, analyses
-scripts/run_pipeline.py       extract + dbt build + docs + data dictionary in one command
-scripts/                      data-dictionary generator, tract-shape export for Power BI
+scripts/run_pipeline.py       extract + dbt build + docs + knowledge bundle in one command
+scripts/                      knowledge-bundle builder and checker, tract-shape export for Power BI
 .github/workflows/refresh.yml scheduled pipeline run (incremental Mon–Sat, full snapshot Sun)
 powerbi/                      DAX measures, theme, map shapes, build guide, validation SQL
-docs/findings.md              key findings
-docs/methodology.md           metric definitions, recurrence method, sensitivity, validation, limitations
-docs/decisions.md             decision log (D01–D30) with evidence for every judgment call
-docs/data_dictionary.md       generated column-level dictionary for every model
+docs/                         knowledge bundle in Open Knowledge Format v0.2; start at docs/index.md
+docs/findings/                key findings
+docs/methodology/             metric definitions, recurrence method, sensitivity, validation, limitations
+docs/decisions/               decision log (D01–D32), one file per judgment call, with its evidence
+docs/metrics/, computations/  dashboard measures, and the sanctioned SQL behind every headline figure
+docs/tables/                  generated schema, lineage and tests for every model (from dbt)
+docs/playbooks/               running, refreshing, extending and validating the project
 ```
 
 ## Running it
@@ -104,7 +107,7 @@ The dashboard is assembled in Power BI Desktop from the `analytics` marts by fol
 
 The planned fifth page, on pothole detection, was dropped. AI-detected potholes are identifiable but make up
 1.1% of pothole requests, too few for a before/after analysis
-([D15](docs/decisions.md#d15--pothole-stretch-analysis-not-feasible-omitted)).
+([D15](docs/decisions/D15-pothole-analysis-omitted.md)).
 
 ## Data quality and methodology highlights
 
@@ -132,7 +135,7 @@ The planned fifth page, on pothole detection, was dropped. AI-detected potholes 
 need and no per-capita rates are shown. Recurrence is an operational proxy: a return report may be an unfixed
 problem, a poor repair or a new incident. The source has no status history, so reopen cycles are invisible.
 The current city system starts in October 2023, which limits seasonal comparisons. Details are in
-[`docs/methodology.md#limitations`](docs/methodology.md#limitations).
+[`docs/methodology/limitations.md`](docs/methodology/limitations.md).
 
 ## Stack
 
